@@ -1,0 +1,22 @@
+name: PR Code Quality Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install modules
+        run: yarn
+      #- name: Install modules in react-fe
+      #  run: cd react-fe && yarn
+      #- name: Install modules in nestjs-be
+      #  run: cd nestjs-be && yarn
+      - name: Run ESLint
+        run: yarn run eslint --ignore-path .eslintignore --ext tsx --ext ts .
+      - name: Run prettier
+        run: yarn run prettier:check

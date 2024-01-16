@@ -1,0 +1,15 @@
+# Ignore
+/.prettierrc
+/package-lock.json
+/package.json
+
+# React Frontend
+/react-fe/dist
+/react-fe/package.json
+/react-fe/package-lock.json
+/react-fe/src/assets
+
+# NestJS Backend
+/nestjs-be/dist
+/nestjs-be/package.json
+/nestjs-be/package-lock.json

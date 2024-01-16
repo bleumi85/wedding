@@ -1,0 +1,38 @@
+{
+  "name": "wedding",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Frontend und Backend für Hochzeitseinladungen",
+  "scripts": {
+    "prepare": "husky install",
+    "prettier": "prettier .",
+    "prettier:check": "npm run prettier -- --check",
+    "prettier:write": "npm run prettier -- --write",
+    "lint": "eslint . --ignore-path .eslintignore --ext ts,tsx . --no-error-on-unmatched-pattern --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint --ext ts --fix . --no-error-on-unmatched-pattern"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bleumi85/wedding.git"
+  },
+  "keywords": [
+    "NestJS",
+    "MikroORM",
+    "React",
+    "Vite"
+  ],
+  "author": {
+    "name": "Jens Bleumer",
+    "email": "jens.bleumer@gmail.com"
+  },
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/bleumi85/wedding/issues"
+  },
+  "homepage": "https://github.com/bleumi85/wedding#readme",
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "husky": "^8.0.3",
+    "prettier": "^3.2.2"
+  }
+}

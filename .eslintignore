@@ -1,0 +1,11 @@
+# Node modules
+/node_modules
+
+# NestJS API
+/nestjs-be/node_modules
+/nestjs-be/dist
+
+# React Frontend
+/react-fe/node_modules
+/react-fe/dist
+/react-fe/src/assets
