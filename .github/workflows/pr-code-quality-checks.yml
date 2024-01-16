@@ -14,8 +14,8 @@ jobs:
         run: yarn
       - name: Install modules in react-fe
         run: cd react-fe && yarn
-      #- name: Install modules in nestjs-be
-      #  run: cd nestjs-be && yarn
+      - name: Install modules in nestjs-be
+        run: cd nestjs-be && yarn
       - name: Run ESLint
         run: yarn run eslint --ignore-path .eslintignore --ext tsx --ext ts .
       - name: Run prettier
