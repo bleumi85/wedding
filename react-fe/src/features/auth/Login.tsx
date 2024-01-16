@@ -156,8 +156,8 @@ const Login: React.FunctionComponent = () => {
           <FormControl>
             <Flex justify={'space-between'}>
               <PinInput id="accessCode" value={accessCode} size={{ base: 'sm', md: 'md' }} onChange={handlePinChange}>
-                {Array.from<number>({ length: 6 }).map((val) => (
-                  <PinInputField key={val} />
+                {Array.from<number>({ length: 6 }).map((_, idx) => (
+                  <PinInputField key={idx} />
                 ))}
               </PinInput>
             </Flex>

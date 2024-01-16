@@ -12,12 +12,23 @@ export type AuthState = {
   invitation: Invitation | null;
 };
 
+export type Group = {
+  id: string;
+  groupName: string;
+  colorLight?: string;
+  colorDark?: string;
+  title: string;
+  guests: Guest[];
+};
+
 export type Guest = {
   id: string;
   firstName: string;
   lastName: string;
+  displayName: string;
   // responseStatus: ResponseStatus;
   role: Role;
+  groups: Group[];
 };
 
 export type Invitation = {
