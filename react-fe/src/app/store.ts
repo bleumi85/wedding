@@ -1,7 +1,14 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
+// reducers
+// import alertReducer from '../features/alert/alertSlice';
+import authReducer from '../features/auth/authSlice';
+
 // Create the root reducer independently to obtain the RootState type
-const rootReducer = combineReducers({});
+const rootReducer = combineReducers({
+  // alert: alertReducer,
+  auth: authReducer,
+});
 
 // exports
 export function setupStore(preloadedState?: Partial<RootState>) {
