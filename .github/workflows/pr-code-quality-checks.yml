@@ -12,8 +12,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install modules
         run: yarn
-      #- name: Install modules in react-fe
-      #  run: cd react-fe && yarn
+      - name: Install modules in react-fe
+        run: cd react-fe && yarn
       #- name: Install modules in nestjs-be
       #  run: cd nestjs-be && yarn
       - name: Run ESLint
