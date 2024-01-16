@@ -3,10 +3,10 @@ import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } 
 import { ErrorPage, PrivateRoute, Root } from './components/main';
 import './index.scss';
 import AuthLayout from './features/auth/AuthLayout';
+import AdminLayout from './features/admin/AdminLayout';
 
 const Home = () => <div data-testid="page_Home">You are home!</div>;
 const Guests = () => <div data-testid="page_Guests">You are on the guests page</div>;
-const AdminLayout = () => <div>Admin LAYOUT</div>;
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,6 +19,10 @@ const router = createBrowserRouter(
       {/* private - ADMIN */}
       <Route element={<PrivateRoute />}>
         <Route path="admin/*" element={<AdminLayout />} />
+        {/* <Route path="admin" element={<AdminLayout />}>
+          <Route index element={<div>Bitte wähle einen Bereich</div>} />
+          <Route path="invitations" element={<div>Einladungen</div>} />
+        </Route> */}
       </Route>
       {/* public */}
       <Route path="auth/*" element={<AuthLayout />} />
