@@ -1,6 +1,7 @@
+import { Address } from '@api/addresses/entities/address.entity';
 import { Guest } from '@api/guests/entities/guest.entity';
 import { DateEntity } from '@database';
-import { Collection, Entity, OneToMany, Property } from '@mikro-orm/core';
+import { Collection, Entity, OneToMany, OneToOne, Property } from '@mikro-orm/core';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({ tableName: 'invitations' })
@@ -20,6 +21,9 @@ export class Invitation extends DateEntity {
 
   @OneToMany({ entity: () => Guest, mappedBy: 'invitation' })
   public guests = new Collection<Guest>(this);
+
+  @OneToOne({ entity: () => Address, mappedBy: 'invitation' })
+  public address: Address;
 
   constructor(partial: Partial<Invitation>) {
     super();
