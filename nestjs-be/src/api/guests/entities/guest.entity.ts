@@ -1,6 +1,7 @@
+import { Group } from '@api/groups/entities/group.entity';
 import { Invitation } from '@api/invitations/entities/invitation.entity';
 import { PrimaryEntity } from '@database';
-import { Cascade, Entity, Enum, ManyToOne, Property, Unique } from '@mikro-orm/core';
+import { Cascade, Collection, Entity, Enum, ManyToMany, ManyToOne, Property, Unique } from '@mikro-orm/core';
 import { ApiProperty } from '@nestjs/swagger';
 import { AgeType, Gender, MealRequest, ResponseStatus, Role } from '@utils/enums';
 
@@ -59,6 +60,13 @@ export class Guest extends PrimaryEntity {
 
   @ManyToOne({ entity: () => Invitation, cascade: [Cascade.REMOVE] })
   public invitation: Invitation;
+
+  @ManyToMany({
+    entity: () => Group,
+    mappedBy: 'guests',
+    cascade: [Cascade.ALL],
+  })
+  public groups = new Collection<Group>(this);
 
   constructor(partial: Partial<Guest>) {
     super();
