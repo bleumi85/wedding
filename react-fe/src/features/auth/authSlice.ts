@@ -37,15 +37,19 @@ const login = createAsyncThunk(`${name}/login`, async (loginData: LoginData) => 
     // store invitation details and jwt token in local storage to keep guest logged in between page refreshes
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ invitation: data }));
 
-    // history.navigate && history.navigate('/');
-
     return data;
   } catch (err) {
     console.error(err);
   }
 });
 
-const logout = createAsyncThunk(`${name}/logout`, async () => {});
+const logout = createAsyncThunk(`${name}/logout`, async () => {
+  try {
+    await authService.logout();
+  } finally {
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+  }
+});
 
 // exports
 export const authActions = { ...authSlice.actions, login, logout };
