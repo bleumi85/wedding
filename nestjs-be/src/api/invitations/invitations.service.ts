@@ -34,6 +34,16 @@ export class InvitationsService {
     throw new HttpException('Eine Einladung mit diesem Token existiert nicht', HttpStatus.NOT_FOUND);
   }
 
+  async getInvitationIfRefreshTokenMatches(refreshToken: string, id: string, showGuests: boolean) {
+    const invitation = await this.findOne(id, showGuests);
+
+    const isRefreshTokenMatching = await bcrypt.compare(refreshToken, invitation.currentHashedRefreshToken);
+
+    if (isRefreshTokenMatching) {
+      return invitation;
+    }
+  }
+
   async update(id: string, updateInvitationDto: UpdateInvitationDto) {
     if (updateInvitationDto.currentHashedRefreshToken) {
       updateInvitationDto.currentHashedRefreshToken = await bcrypt.hash(updateInvitationDto.currentHashedRefreshToken, 10);

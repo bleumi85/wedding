@@ -1,5 +1,5 @@
 import { InvitationsService } from '@api/invitations/invitations.service';
-import { HttpCode, HttpStatus, Post, UseGuards, Req, Res } from '@nestjs/common';
+import { HttpCode, HttpStatus, Post, UseGuards, Req, Res, Get } from '@nestjs/common';
 import { ApiBody } from '@nestjs/swagger';
 import { ControllerHelper } from '@utils/controller-helper';
 import { Response } from 'express';
@@ -8,6 +8,7 @@ import { RequestWithInvitation } from './auth.types';
 import { LoginDto } from './dto/login.dto';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtRefreshGuard } from './jwt-refresh.guard';
 
 @ControllerHelper('auth')
 export class AuthController {
@@ -38,5 +39,15 @@ export class AuthController {
   async logout(@Req() req: RequestWithInvitation) {
     await this.invitationsService.update(req.user.id, { currentHashedRefreshToken: null });
     req.res.setHeader('Set-Cookie', this.authService.getCookiesForLogout());
+  }
+
+  @Get('refresh')
+  @UseGuards(JwtRefreshGuard)
+  refresh(@Req() req: RequestWithInvitation) {
+    const { user: invitation } = req;
+    const { cookie: accessCookie } = this.authService.getCookieWithToken('Access', invitation.id);
+
+    req.res.setHeader('Set-Cookie', accessCookie);
+    return invitation;
   }
 }
