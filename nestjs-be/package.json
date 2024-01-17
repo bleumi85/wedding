@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -20,12 +21,17 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@mikro-orm/cli": "^5.9.7",
+    "@mikro-orm/migrations": "^5.9.7",
     "@mikro-orm/nestjs": "^5.2.3",
     "@mikro-orm/postgresql": "^5.9.7",
+    "@mikro-orm/seeder": "^5.9.7",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",
+    "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/swagger": "^7.2.0",
     "joi": "^17.11.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1"
