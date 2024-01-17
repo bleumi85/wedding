@@ -1,9 +1,11 @@
+import { Invitation } from '@api/invitations/entities/invitation.entity';
 import { PrimaryEntity } from '@database';
-import { Entity, Enum, Property } from '@mikro-orm/core';
+import { Cascade, Entity, Enum, ManyToOne, Property, Unique } from '@mikro-orm/core';
 import { ApiProperty } from '@nestjs/swagger';
 import { AgeType, Gender, MealRequest, ResponseStatus, Role } from '@utils/enums';
 
 @Entity({ tableName: 'guests' })
+@Unique({ properties: ['firstName', 'lastName', 'invitation'], name: 'unique_full_name_on_invitation' })
 export class Guest extends PrimaryEntity {
   @Property()
   @ApiProperty({ example: 'Ansgar' })
@@ -54,6 +56,9 @@ export class Guest extends PrimaryEntity {
   })
   @ApiProperty({ enum: Object.keys(MealRequest) })
   public mealRequest: MealRequest;
+
+  @ManyToOne({ entity: () => Invitation, cascade: [Cascade.REMOVE] })
+  public invitation: Invitation;
 
   constructor(partial: Partial<Guest>) {
     super();
