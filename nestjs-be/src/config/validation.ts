@@ -24,7 +24,7 @@ export const validationSchema = Joi.object({
   SHOW_SWAGGER: Joi.boolean().required(),
   LOG_LEVELS: logLevelsStringSchema.required(),
   // Postgres
-  POSTGRES_HOST: Joi.string().required(),
+  POSTGRES_HOST: Joi.string().default('127.0.0.1'),
   POSTGRES_PORT: Joi.number().required(),
   POSTGRES_USER: Joi.string().required(),
   POSTGRES_PASSWORD: Joi.string().required(),
