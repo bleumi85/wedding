@@ -11,7 +11,7 @@ export class InvitationsService {
     @InjectRepository(Invitation)
     private readonly invitationsRepository: EntityRepository<Invitation>,
     private readonly em: EntityManager,
-  ) { }
+  ) {}
 
   async findOne(id: string, showGuests: boolean) {
     const invitation = await this.invitationsRepository.findOne(id, { populate: showGuests ? ['guests'] : false });
