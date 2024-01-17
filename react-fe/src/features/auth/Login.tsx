@@ -84,7 +84,7 @@ const Login: React.FunctionComponent = () => {
 
   return (
     <CustomStack spacing={4} p={4} align={'center'} boxShadow={'md'} borderRadius={'md'} w={'100%'}>
-      <Avatar w={{ base: 200, md: 320 }} h={{ base: 200, md: 320 }} src={ImgWe} boxShadow={'md'} />
+      <Avatar w={{ base: 200, md: 300 }} h={{ base: 200, md: 300 }} src={ImgWe} boxShadow={'md'} />
       <Box w={'100%'}>{getBody()}</Box>
     </CustomStack>
   );
