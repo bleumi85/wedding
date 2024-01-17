@@ -1,6 +1,6 @@
 import { InvitationsService } from '@api/invitations/invitations.service';
-import { HttpCode, HttpStatus, Post, UseGuards, Req, Res, Get } from '@nestjs/common';
-import { ApiBody } from '@nestjs/swagger';
+import { HttpCode, HttpStatus, Post, UseGuards, Req, Res, Get, Body } from '@nestjs/common';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { ControllerHelper } from '@utils/controller-helper';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
@@ -9,6 +9,7 @@ import { LoginDto } from './dto/login.dto';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtRefreshGuard } from './jwt-refresh.guard';
+import { ValidateTokenDto } from './dto/validate-token.dto';
 
 @ControllerHelper('auth')
 export class AuthController {
@@ -49,5 +50,15 @@ export class AuthController {
 
     req.res.setHeader('Set-Cookie', accessCookie);
     return invitation;
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('validate-token')
+  @ApiBody({ type: ValidateTokenDto })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Validierung war erfolgreich' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Eine Einladung mit diesem Token existiert nicht' })
+  async validateToken(@Body() { token }: ValidateTokenDto, @Res() res: Response) {
+    await this.authService.validateToken(token);
+    return res.status(HttpStatus.NO_CONTENT).json();
   }
 }

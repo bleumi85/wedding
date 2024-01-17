@@ -39,6 +39,15 @@ export class AuthService {
     return [`JblWeddingAccess=; HttpOnly; Path=/; Expires=${new Date(Date.now())}`, `JblWeddingRefresh=; HttpOnly; Path=/; Expires=${new Date(Date.now())}`];
   }
 
+  public async validateToken(token: string) {
+    try {
+      await this.invitationsService.findOneByToken(token, false);
+    } catch (err) {
+      Logger.error(err);
+      throw new HttpException('Token konnte nicht validiert werden', HttpStatus.FORBIDDEN);
+    }
+  }
+
   private async verifyAccessCode(accessCode: string, accessCodeHash: string) {
     const isAccessCodeMatching = await bcrypt.compare(accessCode, accessCodeHash);
     if (!isAccessCodeMatching) {
