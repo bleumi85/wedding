@@ -10,4 +10,11 @@ export class GuestsService {
     private readonly guestsRepository: EntityRepository<Guest>,
     private readonly em: EntityManager,
   ) {}
+
+  async findAll() {
+    return await this.guestsRepository.findAll({
+      populate: ['groups'],
+      orderBy: [{ role: 'ASC' }, { responseStatus: 'ASC' }, { gender: 'ASC' }],
+    });
+  }
 }
