@@ -13,6 +13,12 @@ export class InvitationsService {
     private readonly em: EntityManager,
   ) {}
 
+  async findAll() {
+    return await this.invitationsRepository.findAll({
+      populate: ['address', 'guests'],
+    });
+  }
+
   async findOne(id: string, showGuests: boolean) {
     const invitation = await this.invitationsRepository.findOne(id, { populate: showGuests ? ['guests'] : false });
     if (invitation) {

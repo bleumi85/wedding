@@ -9,10 +9,10 @@ export enum Gender {
 }
 
 export enum MealRequest {
-  NONE,
-  PESCETARIAN,
-  VEGETARIAN,
-  VEGAN,
+  NONE = 'Keine Sonderwünsche',
+  PESCETARIAN = 'Pescetarier',
+  VEGETARIAN = 'Vegetarier',
+  VEGAN = 'Veganer',
 }
 
 export enum NodeEnv {
@@ -21,9 +21,9 @@ export enum NodeEnv {
 }
 
 export enum ResponseStatus {
-  OPEN,
-  CONFIRMED,
-  CANCELED,
+  OPEN = 'Offen',
+  CONFIRMED = 'Zugesagt',
+  CANCELED = 'Abgesagt',
 }
 
 export enum Role {
