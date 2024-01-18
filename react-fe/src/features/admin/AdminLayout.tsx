@@ -28,8 +28,6 @@ const AdminLayout: React.FunctionComponent = () => {
     }
   };
 
-  console.log('foo');
-
   return (
     <Stack data-testid="page_AdminLayout" spacing={{ base: 4, md: 8 }}>
       <SimpleGrid minChildWidth={150} spacing={4} display={{ base: 'none', md: 'grid' }}>
@@ -69,7 +67,7 @@ const AdminLayout: React.FunctionComponent = () => {
         placeholder="Bereich auswählen"
         value={selectValue}
         onChange={(e) => handleSelectChange(e.target.value)}
-        display={{ base: 'block', md: 'block' }}
+        display={{ base: 'block', md: 'none' }}
       >
         <chakra.option value="invitations" disabled={!!errorInvitations}>
           Einladungen

@@ -1,4 +1,4 @@
-import { Role } from '../../common/enums';
+import { Gender, MealRequest, ResponseStatus, Role } from '../../common/enums';
 
 export type Address = {
   id: string;
@@ -10,6 +10,20 @@ export type Address = {
 
 export type AuthState = {
   invitation: Invitation | null;
+};
+
+export type CreateGroupDto = {
+  id?: string;
+  groupName: string;
+  colorLight?: string;
+  colorDark?: string;
+};
+
+export type CreatePdfDto = {
+  token: string;
+  guests: {
+    displayName: string;
+  }[];
 };
 
 export type Group = {
@@ -26,8 +40,11 @@ export type Guest = {
   firstName: string;
   lastName: string;
   displayName: string;
-  // responseStatus: ResponseStatus;
+  responseStatus: ResponseStatus;
   role: Role;
+  gender: Gender;
+  // ageType: AgeType;
+  mealRequest: MealRequest;
   groups: Group[];
 };
 
@@ -43,4 +60,8 @@ export type Invitation = {
 export type LoginData = {
   token: string;
   accessCode: string;
+};
+
+export type MessageResponse = {
+  message: string;
 };
