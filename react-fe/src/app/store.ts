@@ -1,7 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
 // reducers
-// import alertReducer from '../features/alert/alertSlice';
+import alertReducer from '../features/alert/alertSlice';
 import authReducer from '../features/auth/authSlice';
 
 // apis
@@ -9,7 +9,7 @@ import weddingApi from '../features/weddingApi';
 
 // Create the root reducer independently to obtain the RootState type
 const rootReducer = combineReducers({
-  // alert: alertReducer,
+  alert: alertReducer,
   auth: authReducer,
   [weddingApi.reducerPath]: weddingApi.reducer,
 });

@@ -1,5 +1,6 @@
 import { StyleFunctionProps, extendTheme, theme, withDefaultColorScheme } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
+import { containerTheme } from './container.theme';
 
 export const customTheme = extendTheme(
   {
@@ -14,6 +15,9 @@ export const customTheme = extendTheme(
           bg: mode('#f4f5fd', 'gray.800')(props),
         },
       }),
+    },
+    components: {
+      Container: containerTheme,
     },
   },
   withDefaultColorScheme({ colorScheme: 'primary' }),

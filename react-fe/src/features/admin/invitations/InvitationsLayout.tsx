@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Route, Routes } from 'react-router-dom';
+import InvitationsView from './InvitationsView';
 import { Invitation } from '../../auth/authTypes';
 
 interface IInvitationsLayoutProps {
@@ -6,7 +8,11 @@ interface IInvitationsLayoutProps {
 }
 
 const InvitationsLayout: React.FunctionComponent<IInvitationsLayoutProps> = (props) => {
-  return <pre>{JSON.stringify(props.invitations, null, 2)}</pre>;
+  return (
+    <Routes>
+      <Route index element={<InvitationsView {...props} />} />
+    </Routes>
+  );
 };
 
 export default InvitationsLayout;

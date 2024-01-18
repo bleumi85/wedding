@@ -1,6 +1,6 @@
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError, createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { authActions } from './auth/authSlice';
-import { Group, Guest, Invitation } from './auth/authTypes';
+import { CreateGroupDto, Group, Guest, Invitation, MessageResponse } from './auth/authTypes';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
@@ -43,9 +43,36 @@ const weddingApi = createApi({
   tagTypes: ['Group', 'Guest', 'Invitation'],
   endpoints: (builder) => ({
     // Groups
+    addGroup: builder.mutation<Group, CreateGroupDto>({
+      query: (body) => ({
+        url: '/groups',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [{ type: 'Group', id: 'GroupLIST' }],
+    }),
     getGroups: builder.query<Group[], void>({
       query: () => '/groups',
       providesTags: (result) => providesList(result, 'Group'),
+    }),
+    getGroup: builder.query<Group, string>({
+      query: (id) => `/groups/${id}`,
+      providesTags: (_, __, id) => [{ type: 'Group', id }],
+    }),
+    updateGroup: builder.mutation<Group, Partial<CreateGroupDto>>({
+      query: ({ id, ...patch }) => ({
+        url: `/groups/${id}`,
+        method: 'PATCH',
+        body: patch,
+      }),
+      invalidatesTags: (_, __, { id }) => [{ type: 'Group', id }],
+    }),
+    deleteGroup: builder.mutation<MessageResponse, string>({
+      query: (id) => ({
+        url: `/groups/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_, __, id) => [{ type: 'Group', id }],
     }),
     // Guests
     getGuests: builder.query<Guest[], void>({
@@ -60,14 +87,38 @@ const weddingApi = createApi({
       },
       providesTags: (result) => providesList(result, 'Guest'),
     }),
+    deleteGuest: builder.mutation<MessageResponse, string>({
+      query: (id) => ({
+        url: `/guests/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_, __, id) => [{ type: 'Guest', id }],
+    }),
     // Invitations
     getInvitations: builder.query<Invitation[], void>({
       query: () => '/invitations',
       providesTags: (result) => providesList(result, 'Invitation'),
     }),
+    deleteInvitation: builder.mutation<MessageResponse, string>({
+      query: (id) => ({
+        url: `/invitations/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_, __, id) => [{ type: 'Invitation', id }],
+    }),
   }),
 });
 
-export const { useGetGroupsQuery, useGetGuestsQuery, useGetInvitationsQuery } = weddingApi;
+export const {
+  useAddGroupMutation,
+  useGetGroupsQuery,
+  useGetGroupQuery,
+  useUpdateGroupMutation,
+  useDeleteGroupMutation,
+  useGetGuestsQuery,
+  useDeleteGuestMutation,
+  useGetInvitationsQuery,
+  useDeleteInvitationMutation,
+} = weddingApi;
 
 export default weddingApi;

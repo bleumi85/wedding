@@ -8,8 +8,12 @@
 /react-fe/package.json
 /react-fe/package-lock.json
 /react-fe/src/assets
+/react-fe/tsconfig.json
+/react-fe/tsconfig.node.json
 
 # NestJS Backend
 /nestjs-be/dist
 /nestjs-be/package.json
 /nestjs-be/package-lock.json
+/nestjs-be/tsconfig.json
+/nestjs-be/tsconfig.node.json
