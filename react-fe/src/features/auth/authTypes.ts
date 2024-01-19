@@ -1,7 +1,7 @@
-import { Gender, MealRequest, ResponseStatus, Role } from '../../common/enums';
+import { AgeType, Gender, MealRequest, ResponseStatus, Role } from '../../common/enums';
 
 export type Address = {
-  id: string;
+  id?: string;
   street: string;
   zipCode: string;
   city: string;
@@ -17,6 +17,23 @@ export type CreateGroupDto = {
   groupName: string;
   colorLight?: string;
   colorDark?: string;
+};
+
+export type CreateGuestDto = {
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  responseStatus: ResponseStatus;
+  role: Role;
+  gender: Gender;
+  ageType: AgeType;
+  groups: string[];
+};
+
+export type CreateInvitationDto = {
+  hasAddress: boolean;
+  address: Address | null;
+  guests: CreateGuestDto[];
 };
 
 export type CreatePdfDto = {

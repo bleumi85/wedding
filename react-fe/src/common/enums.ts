@@ -1,3 +1,8 @@
+export enum AgeType {
+  ADULT = 'Erwachsener',
+  CHILD = 'Kind',
+}
+
 export enum AlertStatus {
   SUCCESS = 'success',
   ERROR = 'error',
@@ -7,8 +12,8 @@ export enum AlertStatus {
 }
 
 export enum Gender {
-  MALE,
-  FEMALE,
+  MALE = 'm',
+  FEMALE = 'w',
 }
 
 export enum MealRequest {
