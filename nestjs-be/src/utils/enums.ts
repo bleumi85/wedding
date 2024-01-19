@@ -1,11 +1,11 @@
 export enum AgeType {
-  ADULT,
-  CHILD,
+  ADULT = 'Erwachsener',
+  CHILD = 'Kind',
 }
 
 export enum Gender {
-  MALE,
-  FEMALE,
+  MALE = 'm',
+  FEMALE = 'w',
 }
 
 export enum MealRequest {

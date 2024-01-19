@@ -6,7 +6,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({ tableName: 'invitations' })
 export class Invitation extends DateEntity {
-  @Property()
+  @Property({ defaultRaw: 'generate_token()' })
   @ApiProperty({ example: 'abcd-abcd-abcd' })
   public token: string;
 
