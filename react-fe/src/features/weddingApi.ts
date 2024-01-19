@@ -1,6 +1,6 @@
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError, createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { authActions } from './auth/authSlice';
-import { CreateGroupDto, Group, Guest, Invitation, MessageResponse } from './auth/authTypes';
+import { CreateGroupDto, CreateInvitationDto, Group, Guest, Invitation, MessageResponse } from './auth/authTypes';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
@@ -40,7 +40,7 @@ function providesList<R extends { id: string | number }[], T extends string>(res
 const weddingApi = createApi({
   reducerPath: 'weddingApi',
   baseQuery: baseQueryWithRefresh,
-  tagTypes: ['Group', 'Guest', 'Invitation'],
+  tagTypes: ['Address', 'Group', 'Guest', 'Invitation'],
   endpoints: (builder) => ({
     // Groups
     addGroup: builder.mutation<Group, CreateGroupDto>({
@@ -95,6 +95,19 @@ const weddingApi = createApi({
       invalidatesTags: (_, __, id) => [{ type: 'Guest', id }],
     }),
     // Invitations
+    addInvitation: builder.mutation<string, CreateInvitationDto>({
+      query: (body) => ({
+        url: '/invitations',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [
+        { type: 'Invitation', id: 'InvitationLIST' },
+        { type: 'Address', id: 'AddressLIST' },
+        { type: 'Guest', id: 'GuestLIST' },
+        { type: 'Group', id: 'GroupLIST' },
+      ],
+    }),
     getInvitations: builder.query<Invitation[], void>({
       query: () => '/invitations',
       providesTags: (result) => providesList(result, 'Invitation'),
@@ -117,6 +130,7 @@ export const {
   useDeleteGroupMutation,
   useGetGuestsQuery,
   useDeleteGuestMutation,
+  useAddInvitationMutation,
   useGetInvitationsQuery,
   useDeleteInvitationMutation,
 } = weddingApi;
