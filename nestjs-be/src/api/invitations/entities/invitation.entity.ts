@@ -1,4 +1,5 @@
 import { Address } from '@api/addresses/entities/address.entity';
+import { File } from '@api/files/entities/file.entity';
 import { Guest } from '@api/guests/entities/guest.entity';
 import { DateEntity } from '@database';
 import { Collection, Entity, OneToMany, OneToOne, Property } from '@mikro-orm/core';
@@ -6,7 +7,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({ tableName: 'invitations' })
 export class Invitation extends DateEntity {
-  @Property()
+  @Property({ defaultRaw: 'generate_token()' })
   @ApiProperty({ example: 'abcd-abcd-abcd' })
   public token: string;
 
@@ -24,6 +25,14 @@ export class Invitation extends DateEntity {
 
   @OneToOne({ entity: () => Address, mappedBy: 'invitation' })
   public address: Address;
+
+  @OneToOne({ entity: () => File, mappedBy: 'invitation', hidden: true })
+  public file: File;
+
+  @Property({ persist: false })
+  get hasFile(): boolean {
+    return !!this.file;
+  }
 
   constructor(partial: Partial<Invitation>) {
     super();
