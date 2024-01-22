@@ -82,3 +82,9 @@ export type LoginData = {
 export type MessageResponse = {
   message: string;
 };
+
+export type UpdateGuestDto = {
+  id: string;
+  responseStatus: ResponseStatus;
+  mealRequest: MealRequest;
+};

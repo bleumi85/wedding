@@ -1,6 +1,6 @@
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError, createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { authActions } from './auth/authSlice';
-import { CreateGroupDto, CreateInvitationDto, CreatePdfDto, Group, Guest, Invitation, MessageResponse } from './auth/authTypes';
+import { CreateGroupDto, CreateInvitationDto, CreatePdfDto, Group, Guest, Invitation, MessageResponse, UpdateGuestDto } from './auth/authTypes';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
@@ -87,6 +87,17 @@ const weddingApi = createApi({
       },
       providesTags: (result) => providesList(result, 'Guest'),
     }),
+    updateGuests: builder.mutation<MessageResponse, UpdateGuestDto[]>({
+      query: (body) => ({
+        url: '/guests',
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: [
+        { type: 'Guest', id: 'GuestLIST' },
+        { type: 'Invitation', id: 'InvitationLIST' },
+      ],
+    }),
     deleteGuest: builder.mutation<MessageResponse, string>({
       query: (id) => ({
         url: `/guests/${id}`,
@@ -142,6 +153,7 @@ export const {
   useUpdateGroupMutation,
   useDeleteGroupMutation,
   useGetGuestsQuery,
+  useUpdateGuestsMutation,
   useDeleteGuestMutation,
   useAddInvitationMutation,
   useGetInvitationsQuery,
