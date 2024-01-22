@@ -15,6 +15,7 @@ import {
   Flex,
   PinInput,
   PinInputField,
+  FormLabel,
 } from '@chakra-ui/react';
 import * as React from 'react';
 import { BsQrCode, BsCheckLg, BsFillQuestionDiamondFill } from 'react-icons/bs';
@@ -145,6 +146,7 @@ const Login: React.FunctionComponent = () => {
       <chakra.form>
         <Stack spacing={4} mb={6}>
           <FormControl>
+            <FormLabel>Zugangsschlüssel</FormLabel>
             <InputGroup size={{ base: 'sm', md: 'md' }}>
               <InputLeftAddon pointerEvents={'none'} fontSize={{ base: '1.1rem', md: '1.5rem' }}>
                 <BsQrCode />
@@ -154,6 +156,7 @@ const Login: React.FunctionComponent = () => {
             </InputGroup>
           </FormControl>
           <FormControl>
+            <FormLabel>PIN</FormLabel>
             <Flex justify={'space-between'}>
               <PinInput id="accessCode" value={accessCode} size={{ base: 'sm', md: 'md' }} onChange={handlePinChange}>
                 {Array.from<number>({ length: 6 }).map((_, idx) => (

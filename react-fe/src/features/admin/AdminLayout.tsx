@@ -8,6 +8,7 @@ import { FaPeopleGroup, FaRegFaceGrinStars } from 'react-icons/fa6';
 import InvitationsLayout from './invitations/InvitationsLayout';
 import GuestsLayout from './guests/GuestsLayout';
 import GroupsLayout from './groups/GroupsLayout';
+import PdfViewer from './pdfs/PdfViewer';
 
 const AdminLayout: React.FunctionComponent = () => {
   const { data: invitations = [], isLoading: isLoadingInvitations, error: errorInvitations } = useGetInvitationsQuery();
@@ -84,6 +85,7 @@ const AdminLayout: React.FunctionComponent = () => {
         <Route path="invitations/*" element={<InvitationsLayout invitations={invitations} />} />
         <Route path="guests/*" element={<GuestsLayout guests={guests} />} />
         <Route path="groups/*" element={<GroupsLayout groups={groups} />} />
+        <Route path="pdfs/:invitationId" element={<PdfViewer />} />
       </Routes>
     </Stack>
   );

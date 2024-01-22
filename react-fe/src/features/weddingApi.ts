@@ -1,6 +1,6 @@
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError, createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { authActions } from './auth/authSlice';
-import { CreateGroupDto, CreateInvitationDto, Group, Guest, Invitation, MessageResponse } from './auth/authTypes';
+import { CreateGroupDto, CreateInvitationDto, CreatePdfDto, Group, Guest, Invitation, MessageResponse } from './auth/authTypes';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
@@ -40,7 +40,7 @@ function providesList<R extends { id: string | number }[], T extends string>(res
 const weddingApi = createApi({
   reducerPath: 'weddingApi',
   baseQuery: baseQueryWithRefresh,
-  tagTypes: ['Address', 'Group', 'Guest', 'Invitation'],
+  tagTypes: ['Address', 'File', 'Group', 'Guest', 'Invitation'],
   endpoints: (builder) => ({
     // Groups
     addGroup: builder.mutation<Group, CreateGroupDto>({
@@ -95,7 +95,7 @@ const weddingApi = createApi({
       invalidatesTags: (_, __, id) => [{ type: 'Guest', id }],
     }),
     // Invitations
-    addInvitation: builder.mutation<string, CreateInvitationDto>({
+    addInvitation: builder.mutation<MessageResponse, CreateInvitationDto>({
       query: (body) => ({
         url: '/invitations',
         method: 'POST',
@@ -117,7 +117,20 @@ const weddingApi = createApi({
         url: `/invitations/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: (_, __, id) => [{ type: 'Invitation', id }],
+      invalidatesTags: (_, __, id) => [
+        { type: 'Invitation', id },
+        { type: 'Guest', id: 'GuestLIST' },
+        { type: 'Group', id: 'GroupLIST' },
+      ],
+    }),
+    // Files
+    addFiles: builder.mutation<MessageResponse, CreatePdfDto[]>({
+      query: (body) => ({
+        url: '/files',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [{ type: 'Invitation', id: 'InvitationLIST' }],
     }),
   }),
 });
@@ -133,6 +146,7 @@ export const {
   useAddInvitationMutation,
   useGetInvitationsQuery,
   useDeleteInvitationMutation,
+  useAddFilesMutation,
 } = weddingApi;
 
 export default weddingApi;

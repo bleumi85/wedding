@@ -26,6 +26,7 @@ import { StepAddress, StepAddressSchema, StepGuestGroups, StepGuestGroupsSchema,
 import { useAppDispatch } from '../../../app/hooks';
 import { alertActions } from '../../alert/alertSlice';
 import { useAddInvitationMutation } from '../../weddingApi';
+import { Link } from 'react-router-dom';
 
 type Orientation = 'horizontal' | 'vertical';
 
@@ -45,33 +46,23 @@ const steps: StepType[] = [
 const SCHEMA_ARR = [StepAddressSchema, StepGuestsSchema, StepGuestGroupsSchema, null];
 
 const INITIAL_VALUES: CreateInvitationDto = {
-  hasAddress: true,
+  hasAddress: false,
   address: {
-    street: 'Roggenkamp 13',
-    zipCode: '49846',
-    city: 'Hoogstede',
-    country: 'Deutschland',
+    street: '',
+    zipCode: '',
+    city: '',
+    country: '',
   },
   guests: [
     {
-      firstName: 'Heinrich',
-      lastName: 'Bleumer',
-      displayName: 'Papa',
+      firstName: '',
+      lastName: '',
+      displayName: '',
       gender: Gender.MALE,
       ageType: AgeType.ADULT,
       role: Role.GUEST,
       responseStatus: ResponseStatus.OPEN,
-      groups: ['2cb7ece4-0d4c-4821-964f-ff0d9bab48b8'],
-    },
-    {
-      firstName: 'Anita',
-      lastName: 'Bleumer',
-      displayName: 'Mama',
-      gender: Gender.FEMALE,
-      ageType: AgeType.ADULT,
-      role: Role.GUEST,
-      responseStatus: ResponseStatus.OPEN,
-      groups: ['2cb7ece4-0d4c-4821-964f-ff0d9bab48b8'],
+      groups: [],
     },
   ],
 };
@@ -103,14 +94,14 @@ const InvitationsAddForm: React.FunctionComponent = () => {
           values.address = null;
         }
         const data = await addInvitation(values).unwrap();
-        dispatch(alertActions.success({ title: 'Einladung wurde angelegt', description: JSON.stringify(data, null, 2), type: 'json', duration: 4000 }));
+        dispatch(alertActions.success({ title: 'Einladung wurde angelegt', description: data.message, type: 'string', duration: 4000 }));
       } catch (err) {
         dispatch(
           alertActions.error({
             title: 'Einladung konnte nicht angelegt werden',
             description: JSON.stringify(err, null, 2),
             type: 'json',
-            duration: 2000,
+            duration: 4000,
           }),
         );
         console.error(err);
@@ -151,6 +142,13 @@ const InvitationsAddForm: React.FunctionComponent = () => {
                   <Button onClick={() => handleSubmit()} size={['sm', null, 'md']}>
                     {isLastStep ? 'Erstellen' : 'Weiter'}
                   </Button>
+                  <Box w="100%" textAlign={'right'} display={['none', null, 'block']}>
+                    <Link to="/admin/invitations">
+                      <Button variant={'outline'} colorScheme="danger">
+                        Abbrechen
+                      </Button>
+                    </Link>
+                  </Box>
                 </Stack>
                 {!isMobile ? steps[activeStep].content : null}
               </Stack>
