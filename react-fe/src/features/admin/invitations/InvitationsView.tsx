@@ -25,7 +25,7 @@ import { DeleteConfirmationModal } from '../../../components/controls';
 import { useTable } from '../../../functions/table/useTable';
 import { alertActions } from '../../alert/alertSlice';
 import { Invitation, CreatePdfDto, Address, Guest } from '../../auth/authTypes';
-import { useDeleteInvitationMutation } from '../../weddingApi';
+import { useAddFilesMutation, useDeleteInvitationMutation } from '../../weddingApi';
 import AddressTooltip from './AddressTooltip';
 import GuestTag from './GuestTag';
 
@@ -37,6 +37,7 @@ const InvitationsView: React.FunctionComponent<IInvitationsViewProps> = ({ invit
   const dispatch = useAppDispatch();
 
   const [deleteInvitation, { isLoading: isDeleting }] = useDeleteInvitationMutation();
+  const [addPdf] = useAddFilesMutation();
 
   const [id, setId] = React.useState('');
   const [displayConfirmationModal, setDisplayConfirmationModal] = React.useState(false);
@@ -82,8 +83,30 @@ const InvitationsView: React.FunctionComponent<IInvitationsViewProps> = ({ invit
   };
 
   const submitCreatePdf = (values: CreatePdfDto[]) => {
-    console.log(values);
-    toggleAllRowsSelected(false);
+    addPdf(values)
+      .unwrap()
+      .then((data) => {
+        dispatch(
+          alertActions.success({
+            title: 'Pdf erfolgreich erstellt',
+            description: data.message,
+            duration: 2000,
+          }),
+        );
+      })
+      .catch((err) => {
+        dispatch(
+          alertActions.error({
+            title: 'Pdf erstellen nicht möglich',
+            description: JSON.stringify(err, null, 2),
+            type: 'json',
+          }),
+        );
+        console.error(err);
+      })
+      .finally(() => {
+        toggleAllRowsSelected(false);
+      });
   };
 
   return (

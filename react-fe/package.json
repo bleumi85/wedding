@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "copy-worker": "node ./scripts/copy-worker.cjs",
     "dev": "vite",
     "dev:extended": "vite --host",
     "build": "tsc && vite build",
@@ -22,6 +23,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.0.1",
+    "react-pdf": "^7.7.0",
     "react-redux": "^9.1.0",
     "react-router-dom": "^6.21.2",
     "vite-plugin-svgr": "^4.2.0",
