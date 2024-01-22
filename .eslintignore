@@ -4,6 +4,7 @@
 # NestJS API
 /nestjs-be/node_modules
 /nestjs-be/dist
+/nestjs-be/pdf-files
 
 # React Frontend
 /react-fe/node_modules

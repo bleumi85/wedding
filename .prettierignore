@@ -13,6 +13,7 @@
 
 # NestJS Backend
 /nestjs-be/dist
+/nestjs-be/pdf-files
 /nestjs-be/package.json
 /nestjs-be/package-lock.json
 /nestjs-be/tsconfig.json
