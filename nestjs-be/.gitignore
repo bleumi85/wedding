@@ -40,3 +40,6 @@ lerna-debug.log*
 # Seeders
 src/seeders/*
 !src/seeders/InvitationSeeder.ts
+
+# PDF files
+/pdf-files

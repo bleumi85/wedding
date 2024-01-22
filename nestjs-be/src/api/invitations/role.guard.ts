@@ -14,7 +14,6 @@ const RoleGuard = (roles: Role[]): Type<CanActivate> => {
       if (!roles) return true;
 
       const guestRoles = invitation.guests.map((guest) => guest.role);
-      console.log({ roles, guestRoles, user: request.user });
       return roles.some((role) => guestRoles.includes(role));
     }
   }
