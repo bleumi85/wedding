@@ -4,8 +4,8 @@ import { ErrorPage, PrivateRoute, Root } from './components/main';
 import './index.scss';
 import AuthLayout from './features/auth/AuthLayout';
 import AdminLayout from './features/admin/AdminLayout';
+import Home from './pages/Home';
 
-const Home = () => <div data-testid="page_Home">You are home!</div>;
 const Guests = () => <div data-testid="page_Guests">You are on the guests page</div>;
 
 const router = createBrowserRouter(
