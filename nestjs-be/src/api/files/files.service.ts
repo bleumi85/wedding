@@ -3,6 +3,7 @@ import { InvitationsService } from '@api/invitations/invitations.service';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository, EntityManager } from '@mikro-orm/postgresql';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import fontkit from '@pdf-lib/fontkit';
 import { AgeType } from '@utils/enums';
 import bcrypt from 'bcrypt';
@@ -20,6 +21,7 @@ export class FilesService {
     private filesRepository: EntityRepository<File>,
     private readonly em: EntityManager,
     private readonly invitationsService: InvitationsService,
+    private configService: ConfigService,
   ) {}
 
   async createBulk(createFilesDto: CreateFileDto[]) {
@@ -89,8 +91,8 @@ export class FilesService {
     const qrCodeUrl = `https://${homepageUrl}/auth/login?token=${invitation.token}&accessCode=${code}`;
 
     // Load font and embed it to pdf document
-    const fontBytes = readFileSync('C:\\Users\\Nutzer\\AppData\\Local\\Microsoft\\Windows\\Fonts\\DancingScript-VariableFont_wght.ttf');
-    const dancingFont = await pdfDoc.embedFont(fontBytes, { subset: true });
+    const fontBytes = readFileSync(this.configService.get<string>('app.pdfFontPath'));
+    const customFont = await pdfDoc.embedFont(fontBytes, { subset: true });
     const urlFont = await pdfDoc.embedFont(StandardFonts.Courier);
     const urlFontBold = await pdfDoc.embedFont(StandardFonts.CourierBold);
 
@@ -101,7 +103,7 @@ export class FilesService {
     const { width, height } = page.getSize();
     console.log({ width, height });
 
-    page.setFont(dancingFont);
+    page.setFont(customFont);
     page.moveTo(25, height - 40);
     page.drawText('Hallo ' + names + '!', { size: 16 });
 

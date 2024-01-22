@@ -3,6 +3,7 @@ export const configuration = () => ({
     nodeEnv: process.env.NODE_ENV,
     port: parseInt(process.env.PORT, 10),
     showSwagger: JSON.parse(process.env.SHOW_SWAGGER),
+    pdfFontPath: process.env.PDF_FONT_PATH,
   },
   jwt: {
     access: {

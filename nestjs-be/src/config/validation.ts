@@ -23,6 +23,7 @@ export const validationSchema = Joi.object({
   PORT: Joi.number().required(),
   SHOW_SWAGGER: Joi.boolean().required(),
   LOG_LEVELS: logLevelsStringSchema.required(),
+  PDF_FONT_PATH: Joi.string().required(),
   // Postgres
   POSTGRES_HOST: Joi.string().default('127.0.0.1'),
   POSTGRES_PORT: Joi.number().required(),
