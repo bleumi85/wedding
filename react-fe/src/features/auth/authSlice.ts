@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { AuthState, LoginData } from './authTypes';
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { AuthState, LoginData, UpdateGuestDto } from './authTypes';
 import { authService } from './authService';
 
 const LOCAL_STORAGE_KEY = import.meta.env.VITE_LOCAL_STORAGE_KEY;
@@ -7,10 +7,11 @@ const LOCAL_STORAGE_KEY = import.meta.env.VITE_LOCAL_STORAGE_KEY;
 // create slice
 const name = 'auth';
 const initialState: AuthState = createInitialState();
+const reducers = createReducers();
 const authSlice = createSlice({
   name,
   initialState,
-  reducers: {},
+  reducers,
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
       state.invitation = action.payload!;
@@ -20,6 +21,22 @@ const authSlice = createSlice({
     });
   },
 });
+
+function createReducers() {
+  return {
+    updateInvitation,
+  };
+
+  function updateInvitation(state: AuthState, action: PayloadAction<UpdateGuestDto[]>) {
+    const currentGuests = state.invitation!.guests;
+    const updatedGuests = action.payload.map((guest) => {
+      const foundGuest = currentGuests.find((g) => g.id === guest.id)!;
+      return { ...foundGuest, responseStatus: guest.responseStatus, mealRequest: guest.mealRequest };
+    });
+    state.invitation!.guests = updatedGuests;
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ invitation: state.invitation }));
+  }
+}
 
 function createInitialState(): AuthState {
   const storedAuthData = localStorage.getItem(LOCAL_STORAGE_KEY);
