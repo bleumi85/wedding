@@ -1,3 +1,3 @@
 export { default as CustomStack } from './CustomStack';
-export { default as DeleteConfirmationModal } from './DeleteConfirmationModal';
+export { CancelConfirmationModal, DeleteConfirmationModal } from './ConfirmationModal';
 export { default as ErrorBox } from './ErrorBox';
