@@ -9,13 +9,13 @@ import bcrypt from 'bcrypt';
 
 export class InvitationSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
-    em.nativeDelete(Invitation, { token: 'abcd-abcd-abcd' });
+    em.nativeDelete(Invitation, { token: 'bleu-mera-tzel' });
     em.nativeDelete(Invitation, { token: 'xoud-ehin-kelx' });
     em.nativeDelete(Group, { groupName: 'Brautpaar' });
 
     const invitation = em.create(Invitation, {
-      token: 'abcd-abcd-abcd',
-      accessCode: await bcrypt.hash('123456', 10),
+      token: 'bleu-mera-tzel',
+      accessCode: await bcrypt.hash('081022', 10),
     });
 
     const invitationOu = em.create(Invitation, {
@@ -74,7 +74,7 @@ export class InvitationSeeder extends Seeder {
       displayName: 'Andy',
       role: Role.WITNESS,
       gender: Gender.MALE,
-      responseStatus: ResponseStatus.CONFIRMED,
+      responseStatus: ResponseStatus.OPEN,
       mealRequest: MealRequest.NONE,
       invitation: invitationOu,
       groups: [group],
@@ -85,7 +85,7 @@ export class InvitationSeeder extends Seeder {
       displayName: 'Nadine',
       role: Role.GUEST,
       gender: Gender.FEMALE,
-      responseStatus: ResponseStatus.CONFIRMED,
+      responseStatus: ResponseStatus.OPEN,
       mealRequest: MealRequest.VEGETARIAN,
       invitation: invitationOu,
       groups: [group],

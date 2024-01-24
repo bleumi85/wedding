@@ -3,6 +3,7 @@ import { EntityRepository, EntityManager } from '@mikro-orm/postgresql';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Guest } from './entities/guest.entity';
 import { UpdateGuestDto } from './dto/update-guest.dto';
+import { Group } from '@api/groups/entities/group.entity';
 
 @Injectable()
 export class GuestsService {
@@ -17,6 +18,32 @@ export class GuestsService {
       populate: ['groups'],
       orderBy: [{ role: 'ASC' }, { responseStatus: 'ASC' }, { gender: 'ASC' }],
     });
+  }
+
+  async findAllFromCommonGroups(invitationId: string, hasAdmin: boolean) {
+    if (hasAdmin) {
+      return await this.guestsRepository.find({}, { fields: ['id', 'firstName', 'lastName', 'responseStatus'] });
+    }
+
+    const guestIds = await this.em.createQueryBuilder(Guest, 'gu').select('id').where({ 'gu.invitation': invitationId }).getResultList();
+
+    const groups = await this.em
+      .createQueryBuilder(Group, 'gr')
+      .select('id')
+      .distinct()
+      .leftJoin('gr.guests', 'gu')
+      .where({ 'gu.invitation': invitationId })
+      .getResultList();
+
+    const guests = this.em
+      .createQueryBuilder(Guest, 'gu')
+      .select(['id', 'firstName', 'lastName', 'responseStatus'])
+      .distinct()
+      .leftJoin('gu.groups', 'gr')
+      .where({ 'gr.id': { $in: groups } })
+      .andWhere({ 'gu.id': { $nin: guestIds } });
+
+    return await guests.getResultList();
   }
 
   async update(ids: string[], guestsData: UpdateGuestDto[], hasAdmin: boolean) {
