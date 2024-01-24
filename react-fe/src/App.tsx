@@ -5,8 +5,7 @@ import './index.scss';
 import AuthLayout from './features/auth/AuthLayout';
 import AdminLayout from './features/admin/AdminLayout';
 import Home from './pages/Home';
-
-const Guests = () => <div data-testid="page_Guests">You are on the guests page</div>;
+import Applications from './pages/Applications';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -14,7 +13,7 @@ const router = createBrowserRouter(
       {/* private */}
       <Route element={<PrivateRoute />}>
         <Route index element={<Home />} />
-        <Route path="guests" element={<Guests />} />
+        <Route path="applications" element={<Applications />} />
       </Route>
       {/* private - ADMIN */}
       <Route element={<PrivateRoute />}>

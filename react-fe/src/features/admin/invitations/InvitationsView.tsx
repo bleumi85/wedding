@@ -20,7 +20,7 @@ import * as React from 'react';
 import { FaCheck, FaPenToSquare, FaTrash, FaFilePdf, FaQuestion, FaXmark, FaBomb } from 'react-icons/fa6';
 import { Link } from 'react-router-dom';
 import { useAppDispatch } from '../../../app/hooks';
-import { Role, ResponseStatus } from '../../../common/enums';
+import { ResponseStatus } from '../../../common/enums';
 import { DeleteConfirmationModal } from '../../../components/controls';
 import { useTable } from '../../../functions/table/useTable';
 import { alertActions } from '../../alert/alertSlice';
@@ -28,6 +28,7 @@ import { Invitation, CreatePdfDto, Address, Guest } from '../../auth/authTypes';
 import { useAddFilesMutation, useDeleteInvitationMutation } from '../../weddingApi';
 import AddressTooltip from './AddressTooltip';
 import GuestTag from './GuestTag';
+import { someIsAdmin } from '../../../functions/helpers';
 
 interface IInvitationsViewProps {
   invitations: Invitation[];
@@ -186,7 +187,7 @@ const InvitationsTable = React.forwardRef<IInvitationsTableFunctions, IInvitatio
         id: 'actions',
         cell: (info) => {
           const { guests, id } = info.getValue<Invitation>();
-          const hasAdmin = guests.some((guest) => guest.role === Role.ADMIN);
+          const hasAdmin = someIsAdmin(guests);
           const message = 'Möchtest diese Einladung wirklich löschen? Damit löscht du auch die zugehörigen Gäste und die Adresse.';
           return (
             <Stack direction={'row'} justify={'center'}>
@@ -300,7 +301,7 @@ interface IInvitationCardProps {
 }
 
 const InvitationCard: React.FunctionComponent<IInvitationCardProps> = ({ invitation, isDeleting, showDeleteModal }): JSX.Element => {
-  const hasAdmin = invitation.guests.some((guest) => guest.role === Role.ADMIN);
+  const hasAdmin = someIsAdmin(invitation.guests);
   const colorText = useColorModeValue('gray.400', 'gray.500');
 
   const { isOpen, onToggle } = useDisclosure();

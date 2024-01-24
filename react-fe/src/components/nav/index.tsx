@@ -17,13 +17,14 @@ import { FaMoon, FaSun } from 'react-icons/fa6';
 import { MdLogout } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { Role } from '../../common/enums';
 import { authActions } from '../../features/auth/authSlice';
 import { CustomNavLink } from './CustomNavLink';
 import { MenuToggle } from './MenuToggle';
 import { guestLinks, adminLinks } from './navLinks';
+import { useNavigate } from 'react-router-dom';
 
 import LogoWedding from '../../assets/wedding-rings.svg?react';
+import { someIsAdmin } from '../../functions/helpers';
 
 const Nav: React.FunctionComponent = () => {
   const { isOpen, onToggle } = useDisclosure();
@@ -31,10 +32,12 @@ const Nav: React.FunctionComponent = () => {
 
   const dispatch = useAppDispatch();
 
+  const navigate = useNavigate();
+
   const ColorModeIcon = useColorModeValue(FaMoon, FaSun);
 
   const invitation = useAppSelector((state) => state.auth.invitation);
-  const isAdmin = invitation && invitation.guests.some((guest) => guest.role === Role.ADMIN);
+  const isAdmin = invitation && someIsAdmin(invitation.guests);
 
   const menuToggleRef = React.useRef<HTMLButtonElement | null>(null);
   const mobileNavRef = React.useRef<HTMLDivElement | null>(null);
@@ -66,8 +69,12 @@ const Nav: React.FunctionComponent = () => {
   };
 
   const logOut = React.useCallback(() => {
-    dispatch(authActions.logout()).catch((err) => console.error(err));
-  }, [dispatch]);
+    dispatch(authActions.logout())
+      .catch((err) => console.error(err))
+      .finally(() => {
+        navigate('/auth/login');
+      });
+  }, [dispatch, navigate]);
 
   return (
     <chakra.nav

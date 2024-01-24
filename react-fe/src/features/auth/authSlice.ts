@@ -1,6 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { AuthState, LoginData, UpdateGuestDto } from './authTypes';
 import { authService } from './authService';
+import { alertActions } from '../alert/alertSlice';
 
 const LOCAL_STORAGE_KEY = import.meta.env.VITE_LOCAL_STORAGE_KEY;
 
@@ -47,7 +48,7 @@ function createInitialState(): AuthState {
   return parsedAuthData || { invitation: null };
 }
 
-const login = createAsyncThunk(`${name}/login`, async (loginData: LoginData) => {
+const login = createAsyncThunk(`${name}/login`, async (loginData: LoginData, { dispatch }) => {
   try {
     const { data } = await authService.login(loginData);
 
@@ -56,6 +57,13 @@ const login = createAsyncThunk(`${name}/login`, async (loginData: LoginData) => 
 
     return data;
   } catch (err) {
+    dispatch(
+      alertActions.error({
+        title: 'Login fehlgeschlagen',
+        description: 'Du hast offenbar die falschen Zugangsdaten eingegeben',
+        type: 'string',
+      }),
+    );
     console.error(err);
   }
 });

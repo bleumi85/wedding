@@ -26,7 +26,7 @@ import { authService } from './authService';
 import { authActions } from './authSlice';
 import { LoginData } from './authTypes';
 import ImgWe from '/images/wir.jpg';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const Login: React.FunctionComponent = () => {
   const [accessCode, setAccessCode] = React.useState('');
@@ -35,6 +35,8 @@ const Login: React.FunctionComponent = () => {
 
   const dispatch = useAppDispatch();
   const invitation = useAppSelector((state) => state.auth.invitation);
+
+  const navigate = useNavigate();
 
   const validateToken = async (token: string): Promise<void> => {
     try {
@@ -51,12 +53,13 @@ const Login: React.FunctionComponent = () => {
   const handleSubmit = React.useCallback(
     async (values: LoginData) => {
       await dispatch(authActions.login(values));
+      navigate('/');
     },
-    [dispatch],
+    [dispatch, navigate],
   );
 
   const onHelp = () => {
-    handleSubmit({ token: 'abcd-abcd-abcd', accessCode: '123456' }).catch((err) => console.error(err));
+    handleSubmit({ token: 'bleu-mera-tzel', accessCode: '081022' }).catch((err) => console.error(err));
   };
 
   React.useEffect(() => {
