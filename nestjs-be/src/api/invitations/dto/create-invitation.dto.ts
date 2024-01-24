@@ -59,6 +59,10 @@ class GuestParam {
 export class CreateInvitationDto {
   @IsString()
   @IsOptional()
+  token?: string;
+
+  @IsString()
+  @IsOptional()
   currentHashedRefreshToken?: string;
 
   @ValidateNested()
