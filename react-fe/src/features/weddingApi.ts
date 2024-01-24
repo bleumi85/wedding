@@ -12,6 +12,7 @@ import {
   UpdateGuestDto,
   UpdateInvitationTokenDto,
 } from './auth/authTypes';
+import { ResponseStatus } from '../common/enums';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
@@ -101,7 +102,8 @@ const weddingApi = createApi({
     getGuestsFromCommonGroups: builder.query<GuestMin[], void>({
       query: () => '/guests/common',
       transformResponse: (response: GuestMin[]): GuestMin[] => {
-        return response.slice().sort((a, b) => (a.firstName < b.firstName ? -1 : a.lastName < b.lastName ? -1 : 1));
+        const guests: GuestMin[] = [...response, { id: '1', firstName: 'Frank-Walter', lastName: 'Steinmeier', responseStatus: ResponseStatus.CANCELED }];
+        return guests.slice().sort((a, b) => (a.firstName < b.firstName ? -1 : a.lastName < b.lastName ? -1 : 1));
       },
     }),
     updateGuests: builder.mutation<MessageResponse, UpdateGuestDto[]>({

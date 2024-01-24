@@ -159,7 +159,7 @@ const Home: React.FunctionComponent = () => {
         <Text fontSize={{ base: '3xl', md: '6xl' }}>Hallo {names},</Text>
         {everyIsOpen && (
           <Text>
-            wir freuen uns sehr, dass {isOne ? 'Du' : 'Ihr'} den Weg auf unsere kleinen Homepage gefunden {isOne ? 'hast' : 'habt'}.
+            wir freuen uns sehr, dass {isOne ? 'Du' : 'Ihr'} den Weg auf unsere kleine Homepage gefunden {isOne ? 'hast' : 'habt'}.
           </Text>
         )}
         {!everyIsOpen && (
