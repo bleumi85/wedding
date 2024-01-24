@@ -43,11 +43,10 @@ export class GuestsService {
       .leftJoin('gu.groups', 'gr')
       .where({ 'gr.id': { $in: groups } })
       .andWhere({ 'gu.id': { $nin: guestIds } })
+      .orWhere({ 'gu.role': Role.ADMIN })
       .getResultList();
 
-    const adminGuests = await this.guestsRepository.find({ role: Role.ADMIN }, { fields: ['id', 'firstName', 'lastName', 'responseStatus'] });
-
-    return [...adminGuests, ...guests];
+    return guests;
   }
 
   async update(ids: string[], guestsData: UpdateGuestDto[], hasAdmin: boolean) {
