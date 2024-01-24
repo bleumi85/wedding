@@ -1,3 +1,5 @@
+import { Role } from '../common/enums';
+import { Guest } from '../features/auth/authTypes';
 import { ValueType } from '../pages/Home';
 
 export function arraysAreEqual<T extends ValueType>(valueTypes1: T[], valueTypes2: T[]): boolean {
@@ -29,4 +31,8 @@ export function arraysAreEqual<T extends ValueType>(valueTypes1: T[], valueTypes
 
 export function generateRandomNumber(from: number, to: number): number {
   return Math.floor(Math.random() * (to - from) + from);
+}
+
+export function someIsAdmin(guests: Guest[]): boolean {
+  return guests.some((guest) => guest.role === Role.ADMIN);
 }

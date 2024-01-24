@@ -6,9 +6,10 @@ import { FaFaceFlushed, FaFaceSadCry, FaFaceSmile, FaFloppyDisk } from 'react-ic
 import { useUpdateGuestsMutation } from '../features/weddingApi';
 import { alertActions } from '../features/alert/alertSlice';
 import { authActions } from '../features/auth/authSlice';
-import { arraysAreEqual } from '../functions/helpers';
+import { arraysAreEqual, someIsAdmin } from '../functions/helpers';
 import { mealRequestArray } from './arrays';
 import { CancelConfirmationModal } from '../components/controls';
+import { Navigate } from 'react-router-dom';
 
 export type ValueType = {
   id: string;
@@ -59,6 +60,8 @@ const Home: React.FunctionComponent = () => {
         .join(', ') +
       ' und ' +
       guests[nGuests - 1].displayName;
+
+  const hasAdmin = someIsAdmin(guests);
 
   const everyIsOpen = guests.every((guest) => guest.responseStatus === ResponseStatus.OPEN);
   const someIsOpen = guests.some((guest) => guest.responseStatus === ResponseStatus.OPEN);
@@ -140,6 +143,10 @@ const Home: React.FunctionComponent = () => {
         setIsLoading(false);
       });
   };
+
+  if (hasAdmin) {
+    return <Navigate to="/admin/invitations" />;
+  }
 
   return (
     <>

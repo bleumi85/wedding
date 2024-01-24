@@ -87,6 +87,12 @@ const weddingApi = createApi({
       },
       providesTags: (result) => providesList(result, 'Guest'),
     }),
+    getGuestsFromCommonGroups: builder.query<Guest[], string>({
+      query: (id) => ({
+        url: `/guests/invitation/${id}`,
+        method: 'GET',
+      }),
+    }),
     updateGuests: builder.mutation<MessageResponse, UpdateGuestDto[]>({
       query: (body) => ({
         url: '/guests',
@@ -153,6 +159,7 @@ export const {
   useUpdateGroupMutation,
   useDeleteGroupMutation,
   useGetGuestsQuery,
+  useGetGuestsFromCommonGroupsQuery,
   useUpdateGuestsMutation,
   useDeleteGuestMutation,
   useAddInvitationMutation,

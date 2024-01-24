@@ -12,7 +12,6 @@ const AuthLayout: React.FunctionComponent = () => {
       h={{ base: 'calc(100vh - 162px)', md: 'calc(100vh - 112px)' }}
       justify={'center'}
       align={'center'}
-      bg={'red.300'}
     >
       <Flex justify={'center'} align={'center'} minW={{ base: '80%', md: 400 }} maxW={{ base: '80%', md: 400 }}>
         <Routes>
