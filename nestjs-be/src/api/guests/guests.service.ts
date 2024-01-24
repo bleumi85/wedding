@@ -4,6 +4,7 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Guest } from './entities/guest.entity';
 import { UpdateGuestDto } from './dto/update-guest.dto';
 import { Group } from '@api/groups/entities/group.entity';
+import { Role } from '@utils/enums';
 
 @Injectable()
 export class GuestsService {
@@ -35,15 +36,18 @@ export class GuestsService {
       .where({ 'gu.invitation': invitationId })
       .getResultList();
 
-    const guests = this.em
+    const guests = await this.em
       .createQueryBuilder(Guest, 'gu')
       .select(['id', 'firstName', 'lastName', 'responseStatus'])
       .distinct()
       .leftJoin('gu.groups', 'gr')
       .where({ 'gr.id': { $in: groups } })
-      .andWhere({ 'gu.id': { $nin: guestIds } });
+      .andWhere({ 'gu.id': { $nin: guestIds } })
+      .getResultList();
 
-    return await guests.getResultList();
+    const adminGuests = await this.guestsRepository.find({ role: Role.ADMIN }, { fields: ['id', 'firstName', 'lastName', 'responseStatus'] });
+
+    return [...adminGuests, ...guests];
   }
 
   async update(ids: string[], guestsData: UpdateGuestDto[], hasAdmin: boolean) {

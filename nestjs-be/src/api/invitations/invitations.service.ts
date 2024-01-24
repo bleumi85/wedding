@@ -8,6 +8,7 @@ import { CreateInvitationDto } from './dto/create-invitation.dto';
 import { Address } from '@api/addresses/entities/address.entity';
 import { Guest } from '@api/guests/entities/guest.entity';
 import { Group } from '@api/groups/entities/group.entity';
+import { File } from '@api/files/entities/file.entity';
 
 @Injectable()
 export class InvitationsService {
@@ -92,6 +93,9 @@ export class InvitationsService {
   async update(id: string, updateInvitationDto: UpdateInvitationDto) {
     if (updateInvitationDto.currentHashedRefreshToken) {
       updateInvitationDto.currentHashedRefreshToken = await bcrypt.hash(updateInvitationDto.currentHashedRefreshToken, 10);
+    }
+    if (updateInvitationDto.token) {
+      await this.em.nativeDelete(File, { invitation: id });
     }
     await this.invitationsRepository.nativeUpdate({ id }, updateInvitationDto);
     return { message: `Einladung mit id #${id} erfolgreich aktualisiert` };
