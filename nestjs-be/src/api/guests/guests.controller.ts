@@ -17,6 +17,15 @@ export class GuestsController {
     return this.guestsService.findAll();
   }
 
+  @Get('common')
+  @UseGuards(RoleGuard([Role.ADMIN, Role.WITNESS, Role.GUEST]))
+  findAllFromCommonGroups(@Req() req: RequestWithInvitation) {
+    const { user: invitation } = req;
+    const guests = invitation.guests.map((guest) => guest);
+    const hasAdmin = guests.some((guest) => guest.role === Role.ADMIN);
+    return this.guestsService.findAllFromCommonGroups(invitation.id, hasAdmin);
+  }
+
   @Patch()
   @UseGuards(RoleGuard([Role.ADMIN, Role.WITNESS, Role.GUEST]))
   @ApiBody({ type: UpdateGuestDto, isArray: true })
