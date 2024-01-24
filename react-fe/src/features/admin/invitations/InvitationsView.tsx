@@ -10,6 +10,10 @@ import {
   List,
   ListIcon,
   ListItem,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Stack,
   Text,
   useColorModeValue,
@@ -191,11 +195,14 @@ const InvitationsTable = React.forwardRef<IInvitationsTableFunctions, IInvitatio
           const message = 'Möchtest diese Einladung wirklich löschen? Damit löscht du auch die zugehörigen Gäste und die Adresse.';
           return (
             <Stack direction={'row'} justify={'center'}>
-              <Link to={`edit/${id}`}>
-                <IconButton aria-label="Edit" size={'xs'} isDisabled={hasAdmin}>
-                  <FaPenToSquare />
-                </IconButton>
-              </Link>
+              <Menu>
+                <MenuButton size={'xs'} as={IconButton} aria-label="Edit" isDisabled={hasAdmin} icon={<FaPenToSquare />} />
+                <MenuList>
+                  <MenuItem as={Link} to={`edit/token/${id}`}>
+                    Token ändern
+                  </MenuItem>
+                </MenuList>
+              </Menu>
               <IconButton aria-label="Delete" size={'xs'} colorScheme="red" isDisabled={isDeleting || hasAdmin} onClick={() => showDeleteModal(id, message)}>
                 <FaTrash />
               </IconButton>

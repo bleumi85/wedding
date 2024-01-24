@@ -10,6 +10,7 @@ import { arraysAreEqual, someIsAdmin } from '../functions/helpers';
 import { mealRequestArray } from './arrays';
 import { CancelConfirmationModal } from '../components/controls';
 import { Navigate } from 'react-router-dom';
+import { Guest } from '../features/auth/authTypes';
 
 export type ValueType = {
   id: string;
@@ -35,10 +36,13 @@ const Home: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (invitation) {
-      const values: ValueType[] = invitation.guests.map((guest) => {
-        const { id, firstName, lastName, responseStatus, mealRequest } = guest;
-        return { id, firstName, lastName, responseStatus, mealRequest };
-      });
+      const values: ValueType[] = invitation.guests
+        .slice()
+        .sort((a: Guest, b: Guest) => (a.gender > b.gender ? -1 : 1))
+        .map((guest) => {
+          const { id, firstName, lastName, responseStatus, mealRequest } = guest;
+          return { id, firstName, lastName, responseStatus, mealRequest };
+        });
       setGuestStates(values);
       if (guestStatesCurrent.length === 0) {
         setGuestStatesCurrent(values);
@@ -48,7 +52,8 @@ const Home: React.FunctionComponent = () => {
 
   if (!invitation) return null;
 
-  const { guests } = invitation;
+  const { guests: guestsTemp } = invitation;
+  const guests = guestsTemp.slice().sort((a, b) => (a.gender > b.gender ? -1 : 1));
 
   const nGuests = guests.length;
   const isOne = nGuests === 1;
@@ -179,7 +184,7 @@ const Home: React.FunctionComponent = () => {
             uns sehr freuen.
           </Text>
         )}
-        <Flex w={'100%'} justify={'right'} fontFamily="var(--chakra-fonts-body)" pb={[2, null, 4]}>
+        <Flex w={'100%'} justify={'left'} fontFamily="var(--chakra-fonts-body)" pb={[2, null, 4]}>
           <Button size={['xs', null, 'md']} leftIcon={<FaFloppyDisk />} isDisabled={valuesAreEqual} isLoading={isLoading} onClick={onSubmit}>
             Speichern
           </Button>

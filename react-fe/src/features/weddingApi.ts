@@ -1,6 +1,17 @@
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError, createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { authActions } from './auth/authSlice';
-import { CreateGroupDto, CreateInvitationDto, CreatePdfDto, Group, Guest, Invitation, MessageResponse, UpdateGuestDto } from './auth/authTypes';
+import {
+  CreateGroupDto,
+  CreateInvitationDto,
+  CreatePdfDto,
+  Group,
+  Guest,
+  GuestMin,
+  Invitation,
+  MessageResponse,
+  UpdateGuestDto,
+  UpdateInvitationTokenDto,
+} from './auth/authTypes';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
@@ -87,11 +98,11 @@ const weddingApi = createApi({
       },
       providesTags: (result) => providesList(result, 'Guest'),
     }),
-    getGuestsFromCommonGroups: builder.query<Guest[], string>({
-      query: (id) => ({
-        url: `/guests/invitation/${id}`,
-        method: 'GET',
-      }),
+    getGuestsFromCommonGroups: builder.query<GuestMin[], void>({
+      query: () => '/guests/common',
+      transformResponse: (response: GuestMin[]): GuestMin[] => {
+        return response.slice().sort((a, b) => (a.firstName < b.firstName ? -1 : a.lastName < b.lastName ? -1 : 1));
+      },
     }),
     updateGuests: builder.mutation<MessageResponse, UpdateGuestDto[]>({
       query: (body) => ({
@@ -129,6 +140,18 @@ const weddingApi = createApi({
       query: () => '/invitations',
       providesTags: (result) => providesList(result, 'Invitation'),
     }),
+    getInvitation: builder.query<Invitation, string>({
+      query: (id) => `/invitations/${id}`,
+      providesTags: (_, __, id) => [{ type: 'Invitation', id }],
+    }),
+    updateInvitation: builder.mutation<unknown, UpdateInvitationTokenDto>({
+      query: ({ id, ...patch }) => ({
+        url: `/invitations/${id}`,
+        method: 'PATCH',
+        body: patch,
+      }),
+      invalidatesTags: (_, __, { id }) => [{ type: 'Invitation', id }],
+    }),
     deleteInvitation: builder.mutation<MessageResponse, string>({
       query: (id) => ({
         url: `/invitations/${id}`,
@@ -164,6 +187,8 @@ export const {
   useDeleteGuestMutation,
   useAddInvitationMutation,
   useGetInvitationsQuery,
+  useGetInvitationQuery,
+  useUpdateInvitationMutation,
   useDeleteInvitationMutation,
   useAddFilesMutation,
 } = weddingApi;

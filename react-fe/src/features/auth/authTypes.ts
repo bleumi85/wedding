@@ -52,18 +52,21 @@ export type Group = {
   guests: Guest[];
 };
 
-export type Guest = {
+export type GuestMin = {
   id: string;
   firstName: string;
   lastName: string;
-  displayName: string;
   responseStatus: ResponseStatus;
+};
+
+export type Guest = {
+  displayName: string;
   role: Role;
   gender: Gender;
   // ageType: AgeType;
   mealRequest: MealRequest;
   groups: Group[];
-};
+} & GuestMin;
 
 export type Invitation = {
   id: string;
@@ -87,4 +90,9 @@ export type UpdateGuestDto = {
   id: string;
   responseStatus: ResponseStatus;
   mealRequest: MealRequest;
+};
+
+export type UpdateInvitationTokenDto = {
+  id?: string;
+  token: string;
 };
