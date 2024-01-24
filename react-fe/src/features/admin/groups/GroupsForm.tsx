@@ -31,8 +31,6 @@ const GroupsForm: React.FunctionComponent = () => {
   const { colorMode } = useColorMode();
   const checkColor = useColorModeValue('white', 'gray.700');
 
-  console.log({ colorMode, checkColor, COLORS });
-
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 

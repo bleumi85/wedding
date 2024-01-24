@@ -45,6 +45,7 @@ const PdfViewer: React.FunctionComponent = () => {
   const [pdfString, setPdfString] = React.useState('');
   const [error, setError] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [fileName, setFileName] = React.useState('');
 
   React.useEffect(() => {
     const fetchAndProcess = async () => {
@@ -59,8 +60,12 @@ const PdfViewer: React.FunctionComponent = () => {
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const contentType: AxiosHeaderValue = response.headers['content-type'];
-      const blob = new Blob([response.data], { type: contentType as string });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const contentDisposition: string = response.headers['content-disposition'];
 
+      setFileName(contentDisposition.split('=')[1].split('.')[0]);
+
+      const blob = new Blob([response.data], { type: contentType as string });
       setPdfBlob(blob);
 
       const base64String = await convertBlobToBase64(blob);
@@ -79,7 +84,7 @@ const PdfViewer: React.FunctionComponent = () => {
 
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(pdfBlob);
-    link.download = `hochzeit-${+new Date()}.pdf`;
+    link.download = `${fileName}-${+new Date()}.pdf`;
     link.click();
     window.URL.revokeObjectURL(link.href);
     pdfOnClose();
