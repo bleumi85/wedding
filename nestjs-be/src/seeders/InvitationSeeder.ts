@@ -15,12 +15,12 @@ export class InvitationSeeder extends Seeder {
 
     const invitation = em.create(Invitation, {
       token: 'bleu-mera-tzel',
-      accessCode: await bcrypt.hash('081022', 10),
+      accessCode: await bcrypt.hash('123456', 10),
     });
 
     const invitationOu = em.create(Invitation, {
       token: 'xoud-ehin-kelx',
-      accessCode: await bcrypt.hash('090982', 10),
+      accessCode: await bcrypt.hash('123456', 10),
     });
 
     em.create(Address, {
