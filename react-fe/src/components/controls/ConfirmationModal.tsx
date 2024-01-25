@@ -121,3 +121,40 @@ export const DeleteConfirmationModal: React.FunctionComponent<IConfirmationModal
     </Modal>
   );
 };
+
+interface ISimpleModalProps {
+  showModal: boolean;
+  confirmModal: () => void;
+  hideModal: () => void;
+  header: string;
+  message: string;
+}
+
+export const SimpleConfirmationModal: React.FunctionComponent<ISimpleModalProps> = (props) => {
+  const { showModal, confirmModal, hideModal, header, message } = props;
+
+  return (
+    <Modal isOpen={showModal} onClose={hideModal}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader pt={4} pb={2}>
+          {header}
+        </ModalHeader>
+        <ModalBody py={2}>
+          <Alert status="info">
+            <AlertIcon />
+            <AlertDescription>{message}</AlertDescription>
+          </Alert>
+        </ModalBody>
+        <ModalFooter pt={2} pb={4}>
+          <Stack direction={'row'} spacing={[2, null, 4]}>
+            <Button colorScheme="gray" onClick={hideModal} size={['sm', null, 'md']}>
+              Abbrechen
+            </Button>
+            <Button onClick={confirmModal}>Ok</Button>
+          </Stack>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};

@@ -3,9 +3,7 @@ import {
   Card,
   CardBody,
   CardFooter,
-  CardHeader,
   Center,
-  Collapse,
   IconButton,
   List,
   ListIcon,
@@ -17,11 +15,12 @@ import {
   Stack,
   Text,
   useColorModeValue,
-  useDisclosure,
 } from '@chakra-ui/react';
 import { createColumnHelper, ColumnDef } from '@tanstack/react-table';
 import * as React from 'react';
+import { BsQrCode } from 'react-icons/bs';
 import { FaCheck, FaPenToSquare, FaTrash, FaFilePdf, FaQuestion, FaXmark, FaBomb } from 'react-icons/fa6';
+import { TbMapPin, TbMapPinOff } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
 import { useAppDispatch } from '../../../app/hooks';
 import { ResponseStatus } from '../../../common/enums';
@@ -29,7 +28,7 @@ import { DeleteConfirmationModal } from '../../../components/controls';
 import { useTable } from '../../../functions/table/useTable';
 import { alertActions } from '../../alert/alertSlice';
 import { Invitation, CreatePdfDto, Address, Guest } from '../../auth/authTypes';
-import { useAddFilesMutation, useDeleteInvitationMutation } from '../../weddingApi';
+import { useAddFilesMutation, useDeleteInvitationMutation, useDeleteAddressMutation } from '../../weddingApi';
 import AddressTooltip from './AddressTooltip';
 import GuestTag from './GuestTag';
 import { someIsAdmin } from '../../../functions/helpers';
@@ -42,11 +41,16 @@ const InvitationsView: React.FunctionComponent<IInvitationsViewProps> = ({ invit
   const dispatch = useAppDispatch();
 
   const [deleteInvitation, { isLoading: isDeleting }] = useDeleteInvitationMutation();
+  const [deleteAddress, { isLoading: isDeletingAddress }] = useDeleteAddressMutation();
   const [addPdf] = useAddFilesMutation();
 
   const [id, setId] = React.useState('');
   const [displayConfirmationModal, setDisplayConfirmationModal] = React.useState(false);
-  const [deleteMessage, setDeleteMessage] = React.useState<string>('');
+  const [deleteMessage, setDeleteMessage] = React.useState('');
+
+  const [addressId, setAddressId] = React.useState('');
+  const [displayAddressConfirmationModal, setDisplayAddressConfirmationModal] = React.useState(false);
+  const [deleteAddressMessage, setDeleteAddressMessage] = React.useState('');
 
   const childRef = React.useRef<IInvitationsTableFunctions>(null);
 
@@ -62,8 +66,18 @@ const InvitationsView: React.FunctionComponent<IInvitationsViewProps> = ({ invit
     setDisplayConfirmationModal(true);
   }, []);
 
+  const showAddressDeleteModal = React.useCallback((id: string, message: string) => {
+    setAddressId(id);
+    setDeleteAddressMessage(message);
+    setDisplayAddressConfirmationModal(true);
+  }, []);
+
   const hideConfirmationModal = () => {
     setDisplayConfirmationModal(false);
+  };
+
+  const hideAddressConfirmationModal = () => {
+    setDisplayAddressConfirmationModal(false);
   };
 
   const submitDelete = (id: string) => {
@@ -84,6 +98,27 @@ const InvitationsView: React.FunctionComponent<IInvitationsViewProps> = ({ invit
       })
       .finally(() => {
         hideConfirmationModal();
+      });
+  };
+
+  const submitAddressDelete = (id: string) => {
+    deleteAddress(id)
+      .unwrap()
+      .then((data) => {
+        dispatch(alertActions.success({ title: data.message, duration: 2000 }));
+      })
+      .catch((err) => {
+        dispatch(
+          alertActions.error({
+            title: 'Adresse löschen nicht möglich',
+            description: JSON.stringify(err, null, 2),
+            type: 'json',
+          }),
+        );
+        console.error(err);
+      })
+      .finally(() => {
+        hideAddressConfirmationModal();
       });
   };
 
@@ -116,7 +151,15 @@ const InvitationsView: React.FunctionComponent<IInvitationsViewProps> = ({ invit
 
   return (
     <>
-      <InvitationsTable invitations={invitations} isDeleting={isDeleting} showDeleteModal={showDeleteModal} submitCreatePdf={submitCreatePdf} ref={childRef} />
+      <InvitationsTable
+        invitations={invitations}
+        isDeleting={isDeleting}
+        isDeletingAddress={isDeletingAddress}
+        showDeleteModal={showDeleteModal}
+        showAddressDeleteModal={showAddressDeleteModal}
+        submitCreatePdf={submitCreatePdf}
+        ref={childRef}
+      />
       <InvitationsList invitations={invitations} isDeleting={isDeleting} showDeleteModal={showDeleteModal} />
       <DeleteConfirmationModal
         id={id}
@@ -125,13 +168,22 @@ const InvitationsView: React.FunctionComponent<IInvitationsViewProps> = ({ invit
         hideModal={hideConfirmationModal}
         message={deleteMessage}
       />
+      <DeleteConfirmationModal
+        id={addressId}
+        showModal={displayAddressConfirmationModal}
+        confirmModal={submitAddressDelete}
+        hideModal={hideAddressConfirmationModal}
+        message={deleteAddressMessage}
+      />
     </>
   );
 };
 
 interface IInvitationsTableProps extends IInvitationsViewProps {
   isDeleting: boolean;
+  isDeletingAddress: boolean;
   showDeleteModal: (id: string, message: string) => void;
+  showAddressDeleteModal: (id: string, message: string) => void;
   submitCreatePdf: (values: CreatePdfDto[]) => void;
 }
 
@@ -140,7 +192,7 @@ interface IInvitationsTableFunctions {
 }
 
 const InvitationsTable = React.forwardRef<IInvitationsTableFunctions, IInvitationsTableProps>((props, ref): JSX.Element => {
-  const { invitations, isDeleting, showDeleteModal, submitCreatePdf } = props;
+  const { invitations, isDeleting, isDeletingAddress, showDeleteModal, showAddressDeleteModal, submitCreatePdf } = props;
   const columnHelper = createColumnHelper<Invitation>();
 
   const toggleSelected = (selected: boolean) => {
@@ -190,16 +242,27 @@ const InvitationsTable = React.forwardRef<IInvitationsTableFunctions, IInvitatio
         header: '',
         id: 'actions',
         cell: (info) => {
-          const { guests, id } = info.getValue<Invitation>();
+          const { address, guests, id } = info.getValue<Invitation>();
           const hasAdmin = someIsAdmin(guests);
-          const message = 'Möchtest diese Einladung wirklich löschen? Damit löscht du auch die zugehörigen Gäste und die Adresse.';
+          const message = 'Möchtest du diese Einladung wirklich löschen? Damit löscht du auch die zugehörigen Gäste und die Adresse.';
+          const addressMessage = 'Möchtest du die Adresse zu dieser Einladung wirklich löschen?';
           return (
             <Stack direction={'row'} justify={'center'}>
               <Menu>
                 <MenuButton size={'xs'} as={IconButton} aria-label="Edit" isDisabled={hasAdmin} icon={<FaPenToSquare />} />
                 <MenuList>
-                  <MenuItem as={Link} to={`edit/token/${id}`}>
+                  <MenuItem icon={<BsQrCode />} as={Link} to={`edit/token/${id}`}>
                     Token ändern
+                  </MenuItem>
+                  <MenuItem icon={<TbMapPin />} as={Link} to={`edit/address/${id}/${address?.id ?? '1'}`}>
+                    Adresse anlegen/ändern
+                  </MenuItem>
+                  <MenuItem
+                    icon={<TbMapPinOff />}
+                    isDisabled={!address || isDeletingAddress}
+                    onClick={() => showAddressDeleteModal(address!.id!, addressMessage)}
+                  >
+                    Adresse löschen
                   </MenuItem>
                 </MenuList>
               </Menu>
@@ -233,7 +296,7 @@ const InvitationsTable = React.forwardRef<IInvitationsTableFunctions, IInvitatio
         },
       }),
     ],
-    [columnHelper, isDeleting, showDeleteModal],
+    [columnHelper, isDeleting, isDeletingAddress, showDeleteModal, showAddressDeleteModal],
   );
 
   const { TblBody, TblContainer, TblFilter, TblHead, TblPagination, getSelectedRows, toggleAllRowsSelected } = useTable(invitations, columns, {
@@ -311,58 +374,63 @@ const InvitationCard: React.FunctionComponent<IInvitationCardProps> = ({ invitat
   const hasAdmin = someIsAdmin(invitation.guests);
   const colorText = useColorModeValue('gray.400', 'gray.500');
 
-  const { isOpen, onToggle } = useDisclosure();
-
   return (
-    <Card onClick={onToggle}>
-      <Collapse in={!isOpen}>
-        <CardHeader py={4}>
-          {invitation.guests[0].firstName} {invitation.guests[0].lastName}
-        </CardHeader>
-      </Collapse>
-      <Collapse in={isOpen}>
-        <CardBody pt={4} pb={0}>
-          <List>
-            {invitation.guests.map((guest) => {
-              const { icon, color } = ResponseIcon(guest.responseStatus);
-              return (
-                <ListItem key={guest.id}>
-                  <ListIcon as={icon} color={color} />
-                  {guest.firstName} {guest.lastName}
-                </ListItem>
-              );
-            })}
-          </List>
-        </CardBody>
-        <CardFooter py={4}>
-          <Stack direction={'row'} spacing={2} w={'100%'} align={'center'}>
-            <Text as="samp" flexGrow={1} color={colorText}>
-              {invitation.token}
-            </Text>
-            {invitation.hasFile && (
-              <Link to={`/admin/pdfs/${invitation.id}`}>
-                <IconButton aria-label="View PDF" size={'sm'} colorScheme="teal">
-                  <FaFilePdf />
-                </IconButton>
-              </Link>
-            )}
-            <Link to={`edit/${invitation.id}`}>
-              <IconButton aria-label="Edit" size={'sm'} isDisabled={hasAdmin}>
-                <FaPenToSquare />
+    <Card>
+      <CardBody pt={4} pb={0}>
+        <List>
+          {invitation.guests.map((guest) => {
+            const { icon, color } = ResponseIcon(guest.responseStatus);
+            return (
+              <ListItem key={guest.id}>
+                <ListIcon as={icon} color={color} />
+                {guest.firstName} {guest.lastName}
+              </ListItem>
+            );
+          })}
+        </List>
+      </CardBody>
+      <CardFooter py={4}>
+        <Stack direction={'row'} spacing={2} w={'100%'} align={'center'}>
+          <Text as="samp" flexGrow={1} color={colorText}>
+            {invitation.token}
+          </Text>
+          {invitation.hasFile && (
+            <Link to={`/admin/pdfs/${invitation.id}`}>
+              <IconButton aria-label="View PDF" size={'sm'} colorScheme="teal">
+                <FaFilePdf />
               </IconButton>
             </Link>
-            <IconButton
-              aria-label="Delete"
-              size={'sm'}
-              colorScheme="red"
-              isDisabled={isDeleting || hasAdmin}
-              onClick={() => showDeleteModal(invitation.id, message)}
-            >
-              <FaTrash />
+          )}
+          <Menu>
+            <MenuButton size={'sm'} as={IconButton} aria-label="Edit" isDisabled={hasAdmin} icon={<FaPenToSquare />} />
+            <MenuList>
+              <MenuItem icon={<BsQrCode />} as={Link} to={`/edit/token/${invitation.id}`}>
+                Token ändern
+              </MenuItem>
+              <MenuItem icon={<TbMapPin />} as={Link} to={`edit/address?invitationId=${invitation.id}&addressId=${invitation.address?.id ?? '0'}`}>
+                Adresse anlegen/ändern
+              </MenuItem>
+              <MenuItem icon={<TbMapPinOff />} isDisabled={!invitation.address} onClick={() => alert('Foo')}>
+                Adresse löschen
+              </MenuItem>
+            </MenuList>
+          </Menu>
+          <Link to={`edit/${invitation.id}`}>
+            <IconButton aria-label="Edit" size={'sm'} isDisabled={hasAdmin}>
+              <FaPenToSquare />
             </IconButton>
-          </Stack>
-        </CardFooter>
-      </Collapse>
+          </Link>
+          <IconButton
+            aria-label="Delete"
+            size={'sm'}
+            colorScheme="red"
+            isDisabled={isDeleting || hasAdmin}
+            onClick={() => showDeleteModal(invitation.id, message)}
+          >
+            <FaTrash />
+          </IconButton>
+        </Stack>
+      </CardFooter>
     </Card>
   );
 };

@@ -1,6 +1,7 @@
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError, createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { authActions } from './auth/authSlice';
 import {
+  Address,
   CreateGroupDto,
   CreateInvitationDto,
   CreatePdfDto,
@@ -54,6 +55,43 @@ const weddingApi = createApi({
   baseQuery: baseQueryWithRefresh,
   tagTypes: ['Address', 'File', 'Group', 'Guest', 'Invitation'],
   endpoints: (builder) => ({
+    // Address
+    addAddress: builder.mutation<Address, Address>({
+      query: (body) => ({
+        url: '/addresses',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [
+        { type: 'Address', id: 'AddressLIST' },
+        { type: 'Invitation', id: 'InvitationLIST' },
+      ],
+    }),
+    getAddress: builder.query<Address, string>({
+      query: (id) => `/addresses/${id}`,
+      providesTags: (_, __, id) => [{ type: 'Address', id }],
+    }),
+    updateAddress: builder.mutation<Address, Partial<Address>>({
+      query: ({ id, ...patch }) => ({
+        url: `/addresses/${id}`,
+        method: 'PATCH',
+        body: patch,
+      }),
+      invalidatesTags: (_, __, { id }) => [
+        { type: 'Address', id },
+        { type: 'Invitation', id: 'InvitationLIST' },
+      ],
+    }),
+    deleteAddress: builder.mutation<MessageResponse, string>({
+      query: (id) => ({
+        url: `/addresses/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_, __, id) => [
+        { type: 'Address', id },
+        { type: 'Invitation', id: 'InvitationLIST' },
+      ],
+    }),
     // Groups
     addGroup: builder.mutation<Group, CreateGroupDto>({
       query: (body) => ({
@@ -178,6 +216,10 @@ const weddingApi = createApi({
 });
 
 export const {
+  useAddAddressMutation,
+  useGetAddressQuery,
+  useUpdateAddressMutation,
+  useDeleteAddressMutation,
   useAddGroupMutation,
   useGetGroupsQuery,
   useGetGroupQuery,

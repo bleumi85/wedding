@@ -1,24 +1,10 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  Button,
-  Flex,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Progress,
-  Stack,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Button, Flex, Progress, useDisclosure } from '@chakra-ui/react';
 import * as React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { pdfService } from './pdfService';
-import { ErrorBox } from '../../../components/controls';
+import { ErrorBox, SimpleConfirmationModal } from '../../../components/controls';
 import { Document, Page, pdfjs } from 'react-pdf';
+import { FaDownload, FaPrint } from 'react-icons/fa6';
 
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -39,7 +25,8 @@ const convertBlobToBase64 = (blob: Blob): Promise<unknown> =>
 const PdfViewer: React.FunctionComponent = () => {
   const { invitationId } = useParams();
 
-  const { isOpen: pdfIsOpen, onOpen: pdfOnOpen, onClose: pdfOnClose } = useDisclosure();
+  const { isOpen: isOpenDownload, onOpen: onOpenDownload, onClose: onCloseDownload } = useDisclosure();
+  const { isOpen: isOpenPrint, onOpen: onOpenPrint, onClose: onClosePrint } = useDisclosure();
 
   const [pdfBlob, setPdfBlob] = React.useState<Blob>();
   const [pdfString, setPdfString] = React.useState('');
@@ -80,14 +67,42 @@ const PdfViewer: React.FunctionComponent = () => {
   }, [invitationId]);
 
   const onSavePdf = () => {
-    if (!pdfBlob) return;
+    onCloseDownload();
+    if (!pdfBlob) {
+      console.error('No PDF Blob');
+      return;
+    }
 
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(pdfBlob);
     link.download = `${fileName}-${+new Date()}.pdf`;
     link.click();
     window.URL.revokeObjectURL(link.href);
-    pdfOnClose();
+  };
+
+  const onPrintPdf = () => {
+    onClosePrint();
+    if (!pdfBlob) {
+      console.error('No PDF Blob');
+      return;
+    }
+
+    const blobURL = URL.createObjectURL(pdfBlob);
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+
+    iframe.style.display = 'none';
+    iframe.src = blobURL;
+    iframe.onload = () => {
+      setTimeout(() => {
+        iframe.focus();
+        if (iframe.contentWindow) {
+          iframe.contentWindow.print();
+        } else {
+          console.error('No content window for iframe');
+        }
+      }, 1);
+    };
   };
 
   if (isLoading) return <Progress isIndeterminate />;
@@ -108,31 +123,28 @@ const PdfViewer: React.FunctionComponent = () => {
               Zurück
             </Button>
           </Link>
-          <Button onClick={pdfOnOpen}>Download</Button>
+          <Button onClick={onOpenDownload} leftIcon={<FaDownload />}>
+            Download
+          </Button>
+          <Button onClick={onOpenPrint} leftIcon={<FaPrint />}>
+            Drucken
+          </Button>
         </Flex>
       </Flex>
-      <Modal isOpen={pdfIsOpen} onClose={pdfOnClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader pt={4} pb={2}>
-            PDF downloaden
-          </ModalHeader>
-          <ModalBody py={2}>
-            <Alert status="info">
-              <AlertIcon />
-              <AlertDescription>Möchtest du die Datei jetzt speichern?</AlertDescription>
-            </Alert>
-          </ModalBody>
-          <ModalFooter pt={2} pb={4}>
-            <Stack direction={'row'} spacing={[2, null, 4]}>
-              <Button colorScheme="gray" onClick={pdfOnClose} size={['sm', null, 'md']}>
-                Abbrechen
-              </Button>
-              <Button onClick={onSavePdf}>Ok</Button>
-            </Stack>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <SimpleConfirmationModal
+        showModal={isOpenDownload}
+        confirmModal={onSavePdf}
+        hideModal={onCloseDownload}
+        header="PDF downloaden"
+        message="Möchtest du die Datei jetzt speichern?"
+      />
+      <SimpleConfirmationModal
+        showModal={isOpenPrint}
+        confirmModal={onPrintPdf}
+        hideModal={onClosePrint}
+        header="PDF ausdrucken"
+        message="Möchtest du die Datei jetzt ausdrucken?"
+      />
     </>
   );
 };

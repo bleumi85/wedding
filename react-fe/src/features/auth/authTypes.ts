@@ -6,6 +6,7 @@ export type Address = {
   zipCode: string;
   city: string;
   country: string;
+  invitation?: string;
 };
 
 export type AuthState = {
