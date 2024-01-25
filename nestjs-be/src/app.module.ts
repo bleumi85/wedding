@@ -8,9 +8,10 @@ import { InvitationsModule } from './api/invitations/invitations.module';
 import { GroupsModule } from './api/groups/groups.module';
 import { AuthModule } from './api/auth/auth.module';
 import { FilesModule } from './api/files/files.module';
+import { AddressesModule } from './api/addresses/addresses.module';
 
 @Module({
-  imports: [ConfigModule, DatabaseModule, GuestsModule, InvitationsModule, GroupsModule, AuthModule, FilesModule],
+  imports: [ConfigModule, DatabaseModule, GuestsModule, InvitationsModule, GroupsModule, AuthModule, FilesModule, AddressesModule],
   controllers: [AppController],
   providers: [AppService],
 })

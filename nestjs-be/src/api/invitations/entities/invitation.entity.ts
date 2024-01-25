@@ -23,7 +23,13 @@ export class Invitation extends DateEntity {
   @OneToMany({ entity: () => Guest, mappedBy: 'invitation' })
   public guests = new Collection<Guest>(this);
 
-  @OneToOne({ entity: () => Address, mappedBy: 'invitation' })
+  @OneToOne({
+    owner: true,
+    entity: () => Address,
+    inversedBy: 'invitation',
+    onDelete: 'set null',
+    nullable: true,
+  })
   public address: Address;
 
   @OneToOne({ entity: () => File, mappedBy: 'invitation', hidden: true })

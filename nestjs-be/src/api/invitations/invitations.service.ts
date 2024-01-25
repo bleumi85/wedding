@@ -102,8 +102,20 @@ export class InvitationsService {
   }
 
   async remove(id: string) {
-    const invitation = await this.findOne(id, false);
-    await this.em.removeAndFlush(invitation);
-    return { message: 'Einladung wurde erfolgreich gelöscht' };
+    await this.em.begin();
+    try {
+      const invitation = await this.invitationsRepository.findOne({ id }, { populate: ['address'] });
+      const address = await this.em.findOne(Address, { id: invitation.address.id });
+
+      this.em.remove(invitation);
+      this.em.remove(address);
+
+      await this.em.commit();
+      return { message: 'Einladung wurde erfolgreich gelöscht' };
+    } catch (err: any) {
+      await this.em.rollback();
+      Logger.error(err);
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
   }
 }

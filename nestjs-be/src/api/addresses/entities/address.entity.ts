@@ -1,6 +1,6 @@
 import { Invitation } from '@api/invitations/entities/invitation.entity';
 import { PrimaryEntity } from '@database';
-import { Cascade, Entity, OneToOne, Property } from '@mikro-orm/core';
+import { Entity, OneToOne, Property } from '@mikro-orm/core';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({ tableName: 'addresses' })
@@ -23,9 +23,7 @@ export class Address extends PrimaryEntity {
 
   @OneToOne({
     entity: () => Invitation,
-    inversedBy: 'address',
-    owner: true,
-    cascade: [Cascade.ALL],
+    mappedBy: 'address',
   })
   public invitation: Invitation;
 
