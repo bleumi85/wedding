@@ -64,9 +64,10 @@ export type Guest = {
   displayName: string;
   role: Role;
   gender: Gender;
-  // ageType: AgeType;
+  ageType: AgeType;
   mealRequest: MealRequest;
   groups: Group[];
+  invitation: string;
 } & GuestMin;
 
 export type Invitation = {
@@ -91,6 +92,17 @@ export type UpdateGuestDto = {
   id: string;
   responseStatus: ResponseStatus;
   mealRequest: MealRequest;
+};
+
+export type UpdateGuestAdminDto = {
+  id?: string;
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  responseStatus: ResponseStatus;
+  mealRequest: MealRequest;
+  groups: string[];
+  invitation?: string;
 };
 
 export type UpdateInvitationTokenDto = {

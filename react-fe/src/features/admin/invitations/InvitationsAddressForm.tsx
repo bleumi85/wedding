@@ -67,7 +67,7 @@ const InvitationsAddressForm: React.FunctionComponent = () => {
 
   if (address || isAddMode) {
     return (
-      <Container maxW={'container.md'} variant={'wedding'} p={4} bg="gray.500">
+      <Container maxW={'container.md'} variant={'wedding'} p={4}>
         <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
           {({ isSubmitting }: FormikProps<Address>) => (
             <Form>
