@@ -10,6 +10,7 @@ import {
   GuestMin,
   Invitation,
   MessageResponse,
+  UpdateGuestAdminDto,
   UpdateGuestDto,
   UpdateInvitationTokenDto,
 } from './auth/authTypes';
@@ -137,12 +138,27 @@ const weddingApi = createApi({
       },
       providesTags: (result) => providesList(result, 'Guest'),
     }),
+    getGuest: builder.query<Guest, string>({
+      query: (id) => `/guests/${id}`,
+      providesTags: (_, __, id) => [{ type: 'Guest', id }],
+    }),
     getGuestsFromCommonGroups: builder.query<GuestMin[], void>({
       query: () => '/guests/common',
       transformResponse: (response: GuestMin[]): GuestMin[] => {
         const guests: GuestMin[] = [...response, { id: '1', firstName: 'Frank-Walter', lastName: 'Steinmeier', responseStatus: ResponseStatus.CANCELED }];
         return guests.slice().sort((a, b) => (a.firstName < b.firstName ? -1 : a.lastName < b.lastName ? -1 : 1));
       },
+    }),
+    updateGuestAdmin: builder.mutation<MessageResponse, UpdateGuestAdminDto>({
+      query: ({ id, ...patch }) => ({
+        url: `/guests/admin/${id}`,
+        method: 'PATCH',
+        body: patch,
+      }),
+      invalidatesTags: (_, __, { id }) => [
+        { type: 'Guest', id },
+        { type: 'Invitation', id: 'InvitationLIST' },
+      ],
     }),
     updateGuests: builder.mutation<MessageResponse, UpdateGuestDto[]>({
       query: (body) => ({
@@ -226,8 +242,10 @@ export const {
   useUpdateGroupMutation,
   useDeleteGroupMutation,
   useGetGuestsQuery,
+  useGetGuestQuery,
   useGetGuestsFromCommonGroupsQuery,
   useUpdateGuestsMutation,
+  useUpdateGuestAdminMutation,
   useDeleteGuestMutation,
   useAddInvitationMutation,
   useGetInvitationsQuery,

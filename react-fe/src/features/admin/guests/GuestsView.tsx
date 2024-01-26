@@ -113,11 +113,11 @@ const GuestsTable: React.FunctionComponent<IGuestsTableProps> = ({ guests, isDel
         header: '',
         id: 'actions',
         cell: (info) => {
-          const { id, firstName, lastName, role } = info.getValue<Guest>();
+          const { id, invitation, firstName, lastName, role } = info.getValue<Guest>();
           const message = `Möchtest du ${firstName} ${lastName} wirklich löschen? Möglicherweise wird dann auch die zugehörige Einladung gelöscht.`;
           return (
             <Stack direction={'row'} justify={'center'}>
-              <Link to={`edit/${id}`}>
+              <Link to={`edit/${invitation}/${id}`}>
                 <IconButton aria-label="Edit" size={'xs'}>
                   <FaPenToSquare />
                 </IconButton>
@@ -225,7 +225,7 @@ const GuestCard: React.FunctionComponent<IGuestCardProps> = ({ guest, isDeleting
         </CardBody>
         <CardFooter pt={2}>
           <Stack direction={'row'} justify={'right'} spacing={2} w={'100%'}>
-            <Link to={`edit/${guest.id}`}>
+            <Link to={`edit/${guest.invitation}/${guest.id}`}>
               <IconButton aria-label="Edit" size={'sm'}>
                 <FaPenToSquare />
               </IconButton>
