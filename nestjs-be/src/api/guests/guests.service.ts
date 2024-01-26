@@ -6,6 +6,7 @@ import { UpdateGuestDto } from './dto/update-guest.dto';
 import { Group } from '@api/groups/entities/group.entity';
 import { Role } from '@utils/enums';
 import { UpdateGuestAdminDto } from './dto/update-guest-admin.dto';
+import { GroupGuest } from '@api/relations/group-guest.entity';
 
 @Injectable()
 export class GuestsService {
@@ -63,17 +64,21 @@ export class GuestsService {
   async update(id: string, guestData: UpdateGuestAdminDto) {
     await this.em.begin();
     try {
+      const { groups, ...rest } = guestData;
       const guest = await this.findOne(id, true);
-      const groups = await this.em.find(Group, { id: { $in: guestData.groups } }, { populate: ['guests'] });
 
-      guest.groups.removeAll();
+      await this.em.nativeDelete(GroupGuest, { guest });
 
-      delete guestData.invitation;
-      delete guestData.groups;
+      this.guestsRepository.assign(guest, rest);
 
-      this.guestsRepository.assign(guest, { ...guestData, groups });
+      const newGroupsGuests: GroupGuest[] = groups.map((groupId) => {
+        const group = this.em.getReference(Group, groupId);
+        return this.em.create(GroupGuest, { group, guest });
+      });
 
       this.em.persist(guest);
+      this.em.persist(newGroupsGuests);
+
       await this.em.commit();
     } catch (error: any) {
       await this.em.rollback();

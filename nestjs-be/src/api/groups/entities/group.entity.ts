@@ -1,4 +1,5 @@
 import { Guest } from '@api/guests/entities/guest.entity';
+import { GroupGuest } from '@api/relations/group-guest.entity';
 import { PrimaryEntity } from '@database';
 import { Cascade, Collection, Entity, ManyToMany, Property } from '@mikro-orm/core';
 import { ApiProperty } from '@nestjs/swagger';
@@ -19,6 +20,7 @@ export class Group extends PrimaryEntity {
 
   @ManyToMany({
     entity: () => Guest,
+    pivotEntity: () => GroupGuest,
     inversedBy: 'groups',
     owner: true,
     orderBy: { lastName: 'ASC', firstName: 'ASC' },
