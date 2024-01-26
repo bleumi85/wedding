@@ -33,7 +33,6 @@ export class AddressesService {
   async update(id: string, data: UpdateAddressDto) {
     const address = await this.findOne(id);
     delete data.invitation;
-    console.log({ data });
     Object.assign(address, data);
     console.log({ address });
 

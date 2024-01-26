@@ -5,6 +5,7 @@ import { Guest } from './entities/guest.entity';
 import { UpdateGuestDto } from './dto/update-guest.dto';
 import { Group } from '@api/groups/entities/group.entity';
 import { Role } from '@utils/enums';
+import { UpdateGuestAdminDto } from './dto/update-guest-admin.dto';
 
 @Injectable()
 export class GuestsService {
@@ -19,6 +20,16 @@ export class GuestsService {
       populate: ['groups'],
       orderBy: [{ role: 'ASC' }, { responseStatus: 'ASC' }, { gender: 'ASC' }],
     });
+  }
+
+  async findOne(id: string, withGroups = false) {
+    const guest = await this.guestsRepository.findOne(id, {
+      populate: withGroups ? ['groups'] : [],
+    });
+    if (guest) {
+      return guest;
+    }
+    throw new HttpException('Ein Gast mit dieser id existiert nicht', HttpStatus.NOT_FOUND);
   }
 
   async findAllFromCommonGroups(invitationId: string, hasAdmin: boolean) {
@@ -49,7 +60,29 @@ export class GuestsService {
     return guests;
   }
 
-  async update(ids: string[], guestsData: UpdateGuestDto[], hasAdmin: boolean) {
+  async update(id: string, guestData: UpdateGuestAdminDto) {
+    await this.em.begin();
+    try {
+      const guest = await this.findOne(id, true);
+      const groups = await this.em.find(Group, { id: { $in: guestData.groups } }, { populate: ['guests'] });
+
+      guest.groups.removeAll();
+
+      delete guestData.invitation;
+      delete guestData.groups;
+
+      this.guestsRepository.assign(guest, { ...guestData, groups });
+
+      this.em.persist(guest);
+      await this.em.commit();
+    } catch (error: any) {
+      await this.em.rollback();
+      Logger.error(error);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async updateBulk(ids: string[], guestsData: UpdateGuestDto[], hasAdmin: boolean) {
     await this.em.begin();
 
     try {
