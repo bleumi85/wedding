@@ -78,7 +78,7 @@ const GuestForm: React.FunctionComponent = () => {
             <Form>
               <Stack spacing={[2, null, 4]}>
                 <Text fontSize={['lg', null, '2xl']}>Gast {isAddMode ? 'anlegen' : 'bearbeiten'}</Text>
-                <Grid templateColumns="repeat(6, 1fr)" gap={[2, null, 4]}>
+                <Grid templateColumns="repeat(6, 1fr)" gap={[2, null, 4]} mb={2}>
                   <GridItem colSpan={[6, null, 2]}>
                     <FormikInput name="firstName" label="Vorname" showMessage />
                   </GridItem>

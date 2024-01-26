@@ -415,11 +415,6 @@ const InvitationCard: React.FunctionComponent<IInvitationCardProps> = ({ invitat
               </MenuItem>
             </MenuList>
           </Menu>
-          <Link to={`edit/${invitation.id}`}>
-            <IconButton aria-label="Edit" size={'sm'} isDisabled={hasAdmin}>
-              <FaPenToSquare />
-            </IconButton>
-          </Link>
           <IconButton
             aria-label="Delete"
             size={'sm'}
