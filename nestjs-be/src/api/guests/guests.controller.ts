@@ -18,12 +18,6 @@ export class GuestsController {
     return this.guestsService.findAll();
   }
 
-  @Get(':id')
-  @UseGuards(RoleGuard([Role.ADMIN]))
-  findOne(@Param('id') id: string) {
-    return this.guestsService.findOne(id, true);
-  }
-
   @Get('common')
   @UseGuards(RoleGuard([Role.ADMIN, Role.WITNESS, Role.GUEST]))
   findAllFromCommonGroups(@Req() req: RequestWithInvitation) {
@@ -31,6 +25,12 @@ export class GuestsController {
     const guests = invitation.guests.map((guest) => guest);
     const hasAdmin = guests.some((guest) => guest.role === Role.ADMIN);
     return this.guestsService.findAllFromCommonGroups(invitation.id, hasAdmin);
+  }
+
+  @Get(':id')
+  @UseGuards(RoleGuard([Role.ADMIN]))
+  findOne(@Param('id') id: string) {
+    return this.guestsService.findOne(id, true);
   }
 
   @Patch('admin/:id')
