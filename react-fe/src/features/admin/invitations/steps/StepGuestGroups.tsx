@@ -10,6 +10,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  SimpleGrid,
   Stack,
   Tag,
   TagLabel,
@@ -103,7 +104,7 @@ const GuestGroups: React.FunctionComponent = () => {
                     })();
                   }}
                 >
-                  <Stack spacing={[2, null, 4]} direction={['column', null, 'row']}>
+                  <SimpleGrid columns={[1, null, 5]} spacing={[2, null, 4]}>
                     {groups.map((group, groupIdx) => (
                       <CustomCheckbox
                         key={groupIdx}
@@ -125,7 +126,7 @@ const GuestGroups: React.FunctionComponent = () => {
                         {group.groupName}
                       </CustomCheckbox>
                     ))}
-                  </Stack>
+                  </SimpleGrid>
                 </CheckboxGroup>
               </Stack>
             );
@@ -173,7 +174,7 @@ const CustomCheckbox: React.FunctionComponent<ICustomCheckboxProps> = (props) =>
     <chakra.label>
       <input {...getInputProps()} />
       <Box {...getCheckboxProps()}>
-        <Tag variant={state.isChecked ? 'solid' : 'outline'} colorScheme={state.isChecked ? 'green' : 'red'}>
+        <Tag variant={state.isChecked ? 'solid' : 'outline'} colorScheme={state.isChecked ? 'green' : 'red'} w={'100%'}>
           <TagLabel {...getLabelProps()}>{props.children}</TagLabel>
         </Tag>
       </Box>
