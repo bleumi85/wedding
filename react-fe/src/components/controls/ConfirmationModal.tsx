@@ -151,7 +151,9 @@ export const SimpleConfirmationModal: React.FunctionComponent<ISimpleModalProps>
             <Button colorScheme="gray" onClick={hideModal} size={['sm', null, 'md']}>
               Abbrechen
             </Button>
-            <Button onClick={confirmModal}>Ok</Button>
+            <Button onClick={confirmModal} size={['sm', null, 'md']}>
+              Ok
+            </Button>
           </Stack>
         </ModalFooter>
       </ModalContent>

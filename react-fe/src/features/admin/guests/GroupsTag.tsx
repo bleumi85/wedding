@@ -14,9 +14,10 @@ const GroupsTag: React.FunctionComponent<IGroupsTagProps> = ({ groups }) => {
       {groups.map((group) => (
         <Tag
           key={group.id}
-          variant={'outline'}
+          variant={'solid'}
+          color={colorMode === 'light' ? 'white' : 'gray.700'}
           sx={{
-            '--tag-color': colorMode === 'light' ? group.colorLight ?? 'gray.500' : group.colorDark ?? 'gray.200',
+            '--tag-bg': colorMode === 'light' ? group.colorLight ?? 'gray.500' : group.colorDark ?? 'gray.200',
           }}
         >
           {group.groupName}

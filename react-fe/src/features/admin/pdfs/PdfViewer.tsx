@@ -1,4 +1,4 @@
-import { Button, Flex, Progress, useDisclosure } from '@chakra-ui/react';
+import { Button, Flex, Progress, SimpleGrid, useDisclosure } from '@chakra-ui/react';
 import * as React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { pdfService } from './pdfService';
@@ -113,22 +113,31 @@ const PdfViewer: React.FunctionComponent = () => {
 
   return (
     <>
-      <Flex gap={6} justify={'center'}>
-        <Document file={pdfString}>
-          <Page height={600} pageNumber={1} />
-        </Document>
+      <Flex direction={['column', null, 'row']} gap={6} justify={'center'}>
+        <Flex display={['none', null, 'flex']} justify={'center'}>
+          <Document file={pdfString}>
+            <Page height={600} pageNumber={1} />
+          </Document>
+        </Flex>
         <Flex direction={'column'} gap={4}>
+          <SimpleGrid columns={[2, null, 1]} spacing={4}>
+            <Button size={['sm', null, 'md']} onClick={onOpenDownload} leftIcon={<FaDownload />}>
+              Download
+            </Button>
+            <Button size={['sm', null, 'md']} onClick={onOpenPrint} leftIcon={<FaPrint />}>
+              Drucken
+            </Button>
+          </SimpleGrid>
           <Link to="/admin/invitations">
-            <Button variant={'outline'} colorScheme="danger" minW={150}>
+            <Button size={['sm', null, 'md']} variant={'outline'} colorScheme="danger" w={'100%'}>
               Zurück
             </Button>
           </Link>
-          <Button onClick={onOpenDownload} leftIcon={<FaDownload />}>
-            Download
-          </Button>
-          <Button onClick={onOpenPrint} leftIcon={<FaPrint />}>
-            Drucken
-          </Button>
+        </Flex>
+        <Flex display={['flex', null, 'none']} justify={'center'}>
+          <Document file={pdfString}>
+            <Page scale={0.6} height={600} pageNumber={1} />
+          </Document>
         </Flex>
       </Flex>
       <SimpleConfirmationModal
